@@ -1,34 +1,28 @@
-////////////////////USEFUL VARIABLES///////////////////////////////
+////////////////////////PARAMETERES///////////////////////////////
 
-var E_harvesterMax = 5;
+var E_harvesterMax = 1;
 var UpgraderMax = 1;
-var F_upgraderMax = 0;
-var F_builderMax = 0;
+var BuilderMax = 1;
 
 /////////////////////MODULE EXPORT////////////////////////////////
 
 var creepSpawning = {
 
-	run: function(spawnArray, E_harvester_number, Upgrader_number, F_upgrader_number, F_builder_number){
+	run: function(spawnArray, E_harvester_number, Upgrader_number, Builder_number){
 		
-
-		var name = "E_harvester" + Game.time;
-
-		spawnArray[].spawnCreep([WORK,CARRY,MOVE], name, {memory: {role: "E.harvester"}});
-		
-		var name = "Upgrader" + Game.time;
-
-		spawnArray[].spawnCreep([WORK,CARRY,MOVE], name, {memory: {role: "upgrader"}});
-		
-		var name = "F_upgrader" + Game.time;
-
-		spawnArray[].spawnCreep([WORK,CARRY,MOVE], name, {memory: {role: "F.upgrader"}});
-		
-		var name = "F_builder" + Game.time;
-
-		spawnArray[].spawnCreep([WORK,CARRY,MOVE], name, {memory: {role: "F.builder"}});
+		if(E_harvester_number < E_harvesterMax){
+			var creep_name = "E_harvester_" + Game.time;
+			spawnArray["Spawn1"].spawnCreep([WORK,CARRY,MOVE], creep_name, {memory: {role: "E_harvester"}});
+		}
+		if(Upgrader_number < UpgraderMax){
+			var creep_name = "Upgrader_" + Game.time;
+			spawnArray["Spawn1"].spawnCreep([WORK,CARRY,MOVE], creep_name, {memory: {role: "Upgrader", state: "gathering"}});
+		}
+		if(Builder_number < BuilderMax){
+			var creep_name = "Builder_" + Game.time;
+			spawnArray["Spawn1"].spawnCreep([WORK,CARRY,MOVE], creep_name, {memory: {role: "Builder", state: "gathering"}});
+		}
 	}
-
 };
 
 module.exports = creepSpawning;
