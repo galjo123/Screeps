@@ -1,3 +1,4 @@
+//var roleRepairer = require("role_repairer");
 var roleBuilder = require("role_builder");
 var roleHarvester = require("role_harvester");
 var roleUpgrader = require("role_upgrader");

@@ -1,12 +1,12 @@
 var roleBuilder = {
 	run: function(creep){
-		if(creep.carry.energy == 0 && creep.memory.state == "building"){
+		if(creep.carry.energy == 0 && creep.memory.state == "working"){
 			creep.memory.state = "gathering";
 			creep.say("gathering");
 		}
 		if(creep.carry.energy == creep.carryCapacity && creep.memory.state == "gathering"){
-			creep.memory.state = "building";
-			creep.say("building");
+			creep.memory.state = "working";
+			creep.say("working");
 		}
 
 		if(creep.memory.state == "gathering"){
@@ -15,11 +15,22 @@ var roleBuilder = {
 				creep.moveTo(energy_containers[0], {visulaizePathStyle: {stroke: "#ffaa00"}});
 			}
 		} else {
-			var construction_sites = creep.room.find(FIND_CONSTRUCTION_SITES);
-			if(creep.memory.state == "building"){
-				if(creep.build(construction_sites[0]) == ERR_NOT_IN_RANGE){
-					creep.moveTo(construction_sites[0], {visualizePathStyle: {stroke: "#ffffff"}});
-				}
+			//////////////////BUILDING/////////////////////////////////////////
+			if(creep.memory.state == "working"){
+				var construction_sites = creep.room.find(FIND_CONSTRUCTION_SITES);
+				if(construction_sites.length){
+					if(creep.build(construction_sites[0]) == ERR_NOT_IN_RANGE){
+						creep.moveTo(construction_sites[0], {visualizePathStyle: {stroke: "#ffffff"}});
+					}
+				} else {
+				///////////////UPGRADING///////////////////////////////////	
+					var room_controller = creep.room.controller;
+					if(creep.memory.state == "working"){
+						if(creep.upgradeController(room_controller) == ERR_NOT_IN_RANGE){
+							creep.moveTo(room_controller, {visualizePathStyle: {stroke: "#ffffff"}});
+						}
+					}
+				} 
 			}
 		}
 	}

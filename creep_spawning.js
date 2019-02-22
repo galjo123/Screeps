@@ -13,11 +13,11 @@ var creepSpawning = {
 		if(E_harvester_number < E_harvesterMax){
 			var creep_name = "E_harvester_" + Game.time;
 			spawnArray["Spawn1"].spawnCreep([WORK,CARRY,MOVE], creep_name, {memory: {role: "E_harvester"}});
-		}
+		} else
 		if(Upgrader_number < UpgraderMax){
 			var creep_name = "Upgrader_" + Game.time;
 			spawnArray["Spawn1"].spawnCreep([WORK,CARRY,MOVE], creep_name, {memory: {role: "Upgrader", state: "gathering"}});
-		}
+		} else
 		if(Builder_number < BuilderMax){
 			var creep_name = "Builder_" + Game.time;
 			spawnArray["Spawn1"].spawnCreep([WORK,CARRY,MOVE], creep_name, {memory: {role: "Builder", state: "gathering"}});
