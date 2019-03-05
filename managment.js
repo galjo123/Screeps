@@ -33,7 +33,7 @@ const managment = {
 			const Worker_State_Machine = require ("Worker_State_Machine");
 
 			Roles.Assign(creep);
-			Targets.Assign(creep, creep.memory.role);
+			Targets.Assign(creep);
 			Worker_State_Machine.run(creep);
 
 		});

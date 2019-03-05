@@ -14,7 +14,7 @@ const Worker_State_Machine = {
 				if(Creep_Action[creep.memory.Action](creep, target) == ERR_NOT_IN_RANGE){
 					creep.memory.state = "MOVING";
 				}
-				if(!target){
+				if(target == null){
 					creep.memory.state = "IDLE";
 				}
 				break;
