@@ -1,5 +1,8 @@
-if(undefined + 1){
-	console.log(1);
-} else {
-	console.log(2);
-}
+const Action = {
+	harvest(){
+		console.log(1);
+	}
+};
+
+const creep_action = "harvest";
+Action[creep_action]();
