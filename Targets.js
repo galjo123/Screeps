@@ -6,7 +6,11 @@ const Targets = {
 	Containers(room, harvester){
 		const _ = require("lodash");
 		if(harvester){
-			return _.filter(room.find(FIND_MY_STRUCTURES), structure => structure.energy < structure.energyCapacity);
+			return room.find(FIND_MY_STRUCTURES, {filter: structure => {
+				return structure.structureType == STRUCTURE_CONTAINER ||
+			 	structure.energy < structure.energyCapacity;
+			}});
+				
 		} else { //for stuff that's not harvester
 			return room.find(FIND_MY_STRUCTURES, {filter: structure => {
 				return (structure.structureType == STRUCTURE_CONTAINER ||

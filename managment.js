@@ -9,6 +9,11 @@ const managment = {
 				delete(Memory.creeps[name]);
 			}
 		}
+		for(let name in Memory.constructionSites){
+			if(!Game.constructionSites[name]){
+				delete(Memory.constructionSites[name]);
+			}
+		}
 /////////ROOM_INFO_UPDATE/////////////////////////////
 		do_for.All("rooms", room => {
 			const room_info = require("room_info");
@@ -37,12 +42,16 @@ const managment = {
 /////////CREEP_ORDERS//////////////////////////////
 	creep_action(){
 		do_for.All("creeps", creep => {
-			const Roles = require("Assign_Roles");
-			const Targets = require("Assign_Targets");
-			const builder_State_Machine = require ("builder_State_Machine");
+			//const Roles = require("Assign_Roles");
+			const Worker_State_Machine = require ("Worker_State_Machine");
+			
+			//const harvester_number = _.filter(creep.room.memory.roomInfo.my_creeps, creep => creep.memory.role == "harvester").length;
+			//const upgrader_number = _.filter(creep.room.memory.roomInfo.my_creeps, creep => creep.memory.role == "upgrader").length;
 
-			Targets.Assign(creep);
-			builder_State_Machine.run(creep);
+			/*if(creep.room.memory.roomInfo.my_construction_sites.length > 0 && upgrader_number > 0 && creep.memory.role != "harvester"){
+				Roles.Assign(creep);
+			}*/
+			Worker_State_Machine.run(creep);
 
 		});
 	},

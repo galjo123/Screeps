@@ -39,7 +39,7 @@ const Targets = {
 					creep.memory.Target = Targets.Construction_Sites(creep.room)[0];//could use a better algorithm
 					creep.memory.Action = "build";
 			}
-		} else if(creep.memory.Target.id != 0){
+		} else if(creep.carry.energy < creep.carryCapacity){
 			switch(creep.memory.role){
 				case "harvester":
 					if(creep.memory.Target.energy == creep.memory.Target.energyCapacity && creep.memory.Target.my){
