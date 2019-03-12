@@ -42,17 +42,25 @@ const managment = {
 /////////CREEP_ORDERS//////////////////////////////
 	creep_action(){
 		do_for.All("creeps", creep => {
-			//const Roles = require("Assign_Roles");
 			const Worker_State_Machine = require ("Worker_State_Machine");
 			
-			//const harvester_number = _.filter(creep.room.memory.roomInfo.my_creeps, creep => creep.memory.role == "harvester").length;
-			//const upgrader_number = _.filter(creep.room.memory.roomInfo.my_creeps, creep => creep.memory.role == "upgrader").length;
+			const harvester_number = _.filter(creep.room.memory.roomInfo.my_creeps, creep => creep.memory.role == "harvester").length;
+			const upgrader_number = _.filter(creep.room.memory.roomInfo.my_creeps, creep => creep.memory.role == "upgrader").length;
+///////////////FOR_FINDING_A_CHANGE_IN_THE_NUMBER_OF_CONSTRUCTION_SITES/////////////////////////////////////////
+			/*const current_construction_sites = creep.room.memory.roomInfo.my_construction_sites.length;
+			let i, preavious_number_of_construction_sites;
+			i++;
+			if(i % 2 == 0){
+				preavious_number_of_construction_sites = creep.room.memory.roomInfo.my_construction_sites.length;
+			}
 
-			/*if(creep.room.memory.roomInfo.my_construction_sites.length > 0 && upgrader_number > 0 && creep.memory.role != "harvester"){
+			if(current_construction_sites - preavious_number_of_construction_sites != 0 &&
+				upgrader_number > 0 &&
+				creep.memory.role != "harvester" &&
+				creep.memory.role != "upgrader"){
 				Roles.Assign(creep);
 			}*/
 			Worker_State_Machine.run(creep);
-
 		});
 	},
 

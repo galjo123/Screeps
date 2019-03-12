@@ -13,6 +13,14 @@ const Creep_Action = {
 
 	build(creep, target){
 		return creep.build(target);
+	},
+
+	repair(creep, target){
+		return creep.repair(target);
+	},
+	
+	withdraw(creep,target){
+		return creep.withdraw(target, RESOURCE_ENERGY);
 	}
 };
 

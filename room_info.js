@@ -4,6 +4,7 @@ class room_info {
 ///////////////FIND_MY_STUFF////////////////////////////////////////
 		this.my_creeps = room.find(FIND_MY_CREEPS);
 		this.my_structures = room.find(FIND_MY_STRUCTURES);
+		this.structures = room.find(FIND_STRUCTURES);
 		this.my_spawns = room.find(FIND_MY_SPAWNS);
 		this.my_construction_sites = room.find(FIND_MY_CONSTRUCTION_SITES);
 ///////////////FIND_RESOURCES////////////////////////////////////////
