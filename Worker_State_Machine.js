@@ -36,8 +36,8 @@ const Worker_State_Machine = {
 				}
 				break;
 			case "MOVING":
-				creep.moveTo(target);
-/////////////////CREEP_IS_NOT_IN_RANGE////////////////////////////
+				creep.moveTo(target, {visualizePathStyle: {stroke: "ffffff", opacity: 0.5, color: "gold"}});
+/////////////////CREEP_IS_IN_RANGE////////////////////////////
 				if(Creep_Action[creep.memory.Action](creep, target) != ERR_NOT_IN_RANGE){
 					creep.memory.state = "WORKING";
 				}
