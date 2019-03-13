@@ -5,14 +5,14 @@ const Targets = {
 		if(creep.carry.energy == 0){
 			switch (creep.memory.role){
 				case "harvester":
-					creep.memory.Target = Targets.Sources(creep.room)[0]; //needs to be for all sources
+					creep.memory.Target =  creep.memory.Permanent_Target;
 					creep.memory.Action = "harvest";
 					break;
 				case "upgrader":
 					creep.memory.Target = creep.pos.findClosestByPath(Targets.Containers(creep.room, false));
 					creep.memory.Action = "withdraw";
 					if(creep.memory.Target == undefined){
-						creep.memory.Target = creep.pos.findClosestByPath(Targets.Sources(creep.room)); //needs to be for all sources
+						creep.memory.Target = creep.pos.findClosestByPath(creep.room.find(FIND_SOURCES)); //needs to be for all sources
 						creep.memory.Action = "harvest";
 					}
 					break;
@@ -20,7 +20,7 @@ const Targets = {
 					creep.memory.Target = creep.pos.findClosestByPath(Targets.Containers(creep.room, false));
 					creep.memory.Action = "withdraw";
 					if(creep.memory.Target == undefined){
-						creep.memory.Target = creep.pos.findClosestByPath(Targets.Sources(creep.room));
+						creep.memory.Target = creep.pos.findClosestByPath(creep.room.find(FIND_SOURCES));
 						creep.memory.Action = "harvest";
 					}
 					break;
@@ -28,7 +28,7 @@ const Targets = {
 					creep.memory.Target = creep.pos.findClosestByPath(Targets.Containers(creep.room, false));
 					creep.memory.Action = "withdraw";
 					if(creep.memory.Target == undefined){
-						creep.memory.Target = creep.pos.findClosestByPath(Targets.Sources(creep.room));
+						creep.memory.Target = creep.pos.findClosestByPath(creep.room.find(FIND_SOURCES));
 						creep.memory.Action = "harvest";
 					}
 					break;

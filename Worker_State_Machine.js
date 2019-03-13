@@ -2,6 +2,7 @@ const Worker_State_Machine = {
 	run: (creep) => {
 		const Creep_Action = require("Creep_Actions");
 		const Targets = require("Assign_Targets");
+		const Permanent_Targets = require("Assign_Permanent_Targets");
 		const target = Game.getObjectById(creep.memory.Target.id);
 
 		switch(creep.memory.state){
@@ -12,6 +13,9 @@ const Worker_State_Machine = {
 				break;
 			case "IDLE":
 				Targets.Assign(creep);
+				if(creep.memory.Target.id == 0 || creep.memory.Target == ""){
+					Permanent_Targets.Assign(creep);
+				}
 /////////////////CREEP_GETS_A_TARGET////////////////////////////
 				if(target){
 					creep.memory.state = "WORKING";
@@ -33,6 +37,10 @@ const Worker_State_Machine = {
 				if(target == null){
 /////////////////CREEP_DOESN'T_HAVE_TARGETS_ANYMORE////////////////////////////
 					creep.memory.state = "IDLE";
+				}
+/////////////////REPAIRER_FINISHED_WORK////////////////////////////
+				if(creep.memory.role == "repairer" && target.hits == target.hitsMax){
+					Targets.Assign(creep);
 				}
 				break;
 			case "MOVING":

@@ -26,16 +26,20 @@ const managment = {
 			const harvester_number = _.filter(spawn.room.memory.roomInfo.my_creeps, creep => creep.memory.role == "harvester").length;
 			const upgrader_number = _.filter(spawn.room.memory.roomInfo.my_creeps, creep => creep.memory.role == "upgrader").length;
 			const builder_number = _.filter(spawn.room.memory.roomInfo.my_creeps, creep => creep.memory.role == "builder").length;
+			const repairer_number = _.filter(spawn.room.memory.roomInfo.my_creeps, creep => creep.memory.role == "repairer").length;
 			let name;
 			if(!spawn.spawning && harvester_number > 0 && upgrader_number == 0){
 			name = "Upgrader_" + Game.time;
-			spawn.spawnCreep([WORK,CARRY,MOVE], name, {memory: {role: "upgrader", state: "SPAWNING", Target: "", Action: ""}});
-			} else if(!spawn.spawning && harvester_number < 3){
+			spawn.spawnCreep([WORK,CARRY,MOVE], name, {memory: {role: "upgrader", state: "SPAWNING", Target: "", Permanent_Target: "", Action: ""}});
+			} else if(!spawn.spawning && harvester_number < 7){
 			name = "Harvester_" + Game.time;
-			spawn.spawnCreep([WORK,CARRY,MOVE], name, {memory: {role: "harvester", state: "SPAWNING", Target: "", Action: ""}});
+			spawn.spawnCreep([WORK,CARRY,MOVE], name, {memory: {role: "harvester", state: "SPAWNING", Target: "", Permanent_Target: "", Action: ""}});
 			} else if(!spawn.spawning && builder_number < 3){
 			name = "Builder_" + Game.time;
-			spawn.spawnCreep([WORK,CARRY,MOVE], name, {memory: {role: "builder", state: "SPAWNING", Target: "", Action: ""}});
+			spawn.spawnCreep([WORK,CARRY,MOVE], name, {memory: {role: "builder", state: "SPAWNING", Target: "", Permanent_Target: "", Action: ""}});
+			} else if(!spawn.spawning && repairer_number < 1){
+			name = "Repairer_" + Game.time;
+			spawn.spawnCreep([WORK,CARRY,MOVE], name, {memory: {role: "repairer", state: "SPAWNING", Target: "", Permanent_Target: "", Action: ""}});
 			}
 		});
 	},
@@ -43,18 +47,18 @@ const managment = {
 	creep_action(){
 		do_for.All("creeps", creep => {
 			const Worker_State_Machine = require ("Worker_State_Machine");
+			const Roles = require("Assign_Roles");
 			
 			const harvester_number = _.filter(creep.room.memory.roomInfo.my_creeps, creep => creep.memory.role == "harvester").length;
 			const upgrader_number = _.filter(creep.room.memory.roomInfo.my_creeps, creep => creep.memory.role == "upgrader").length;
 ///////////////FOR_FINDING_A_CHANGE_IN_THE_NUMBER_OF_CONSTRUCTION_SITES/////////////////////////////////////////
-			/*const current_construction_sites = creep.room.memory.roomInfo.my_construction_sites.length;
-			let i, preavious_number_of_construction_sites;
-			i++;
-			if(i % 2 == 0){
-				preavious_number_of_construction_sites = creep.room.memory.roomInfo.my_construction_sites.length;
-			}
-
-			if(current_construction_sites - preavious_number_of_construction_sites != 0 &&
+			const current_construction_sites = creep.room.memory.roomInfo.my_construction_sites.length;
+			const current_damaged_structures = _.filter(creep.room.memory.roomInfo.my_construction_sites, structure => {
+					return structure.hits <= 0.9 * structure.hitsMax;}).length;
+			
+/*
+			if((current_construction_sites - creep.room.memory.preavious_number_of_construction_sites > 0 ||
+				current_damaged_structures - creep.room.memory.preavious_number_of_damaged_structures > 0) &&
 				upgrader_number > 0 &&
 				creep.memory.role != "harvester" &&
 				creep.memory.role != "upgrader"){
