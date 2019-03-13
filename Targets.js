@@ -1,5 +1,5 @@
 const Targets = {
-	Sources(room){
+	Sources(room, harvester){
 		const _ = require("lodash");
 		const do_for = require("do_for_All");
 		const sourcekeepers = room.memory.roomInfo.sourcekeepers;
@@ -10,20 +10,22 @@ const Targets = {
 			const guarded_source = sourcekeeper.pos.findClosestByPath(sources);
 			_.pull(sources, guarded_source);
 		});
-
-		_.remove(sources, source => {
-			let assigned_creeps = 0;
-			for(let i in Game.rooms[room.name].find(FIND_MY_CREEPS)){
-				const creep = Game.rooms[room.name].find(FIND_MY_CREEPS)[i];
-				if(creep.memory.Permanent_Target.id == source.id){
-					assigned_creeps++;
+		
+		if(harvester){
+			_.remove(sources, source => {
+				let assigned_creeps = 0;
+				for(let i in Game.rooms[room.name].find(FIND_MY_CREEPS)){
+					const creep = Game.rooms[room.name].find(FIND_MY_CREEPS)[i];
+					if(creep.memory.Permanent_Target.id == source.id){
+						assigned_creeps++;
+					}
 				}
-			}
-			if(assigned_creeps >= room.memory.roomInfo.spots_per_source[source.id]){
-				return true;
-			}
-			return false;
-		});
+				if(assigned_creeps >= room.memory.roomInfo.spots_per_source[source.id]){
+					return true;
+				}
+				return false;
+			});
+		}
 
 		return sources;
 	},
