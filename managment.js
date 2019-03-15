@@ -15,9 +15,9 @@ const managment = {
 			const Targets = require("Targets");
 			
 			room.memory.roomInfo = new room_info(room);
-//////////////WILL_HELP_IN_DETECTING_CHANGES_IN_ROOM////////////
+//////////FOR_DETECTING_CHANGES_IN_ROOM////////////
 			room.memory.Counter++;
-			if(room.memory.Counter % 2 == 0){
+			if(room.memory.Counter % 3 == 0){
 				room.memory.Preavious_Construction_Sites = Targets.Construction_Sites(room);
 				room.memory.Preavious_Damaged_Structures = Targets.Damaged_Structures(room);
 				room.memory.Counter = 0;
@@ -27,22 +27,15 @@ const managment = {
 	},
 /////////CREEP_SPAWNING//////////////////////////////
 	creep_spawning(){
+		const Make = require("Creep_Spawner");
+
 		do_for.All("spawns", spawn => {
-			const harvester_number = _.filter(spawn.room.memory.roomInfo.my_creeps, creep => creep.memory.role == "harvester").length;
-			const worker_number = _.filter(spawn.room.memory.roomInfo.my_creeps, creep => creep.memory.role != "harvester").length;
-			let name;
-////////////SPAWNING_HARVESTERS//////////////////////////////
-			if(!spawn.spawning && harvester_number < 7){
-			name = "Harvester_" + Game.time;
-			spawn.spawnCreep([WORK,CARRY,MOVE], name, {memory: {role: "harvester", state: "SPAWNING", Target: "", Permanent_Target: "", Action: ""}});
-///////////SPAWNING_WORKERS//////////////////////////////////
-			} else if(!spawn.spawning && worker_number < 4){
-			name = "Worker_" + Game.time;
-			spawn.spawnCreep([WORK,CARRY,MOVE], name, {memory: {role: "upgrader", state: "SPAWNING", Target: "", Permanent_Target: "", Action: ""}});
-			}
+			Make.Harvester(spawn);
+			Make.Worker(spawn);
 			/*the function will require when to set what role as in if there are construction sites available make it so creep's role is builder
 			the function will require upgrading of creeps
-			function will require a function telling it how many creeps it can spawn max*/
+			function will require a function telling it how many creeps it can spawn max
+			harvesters require spawning numbers lowered until the room is a bit higher*/
 		});
 	},
 /////////CREEP_ORDERS//////////////////////////////
@@ -52,15 +45,13 @@ const managment = {
 			const Roles = require("Assign_Roles");
 			const Targets = require("Targets");
 			
-			const harvester_number = _.filter(creep.room.memory.roomInfo.my_creeps, creep => creep.memory.role == "harvester").length;
-			const upgrader_number = _.filter(creep.room.memory.roomInfo.my_creeps, creep => creep.memory.role == "upgrader").length;
 ///////////////FOR_FINDING_A_CHANGE_IN_THE_NUMBER_OF_CONSTRUCTION_SITES/////////////////////////////////////////
 			const current_construction_sites = Targets.Construction_Sites(creep.room);
 			const current_damaged_structures = Targets.Damaged_Structures(creep.room);
 
 			if((current_construction_sites.length - creep.room.memory.Preavious_Construction_Sites.length != 0 ||
 				current_damaged_structures.length - creep.room.memory.Preavious_Damaged_Structures.length != 0 ) &&
-				creep.memory.role != "harvester"){
+				creep.memory.role != "harvester"){//needs extra conditions!!!!!!(ie. creep death)
 				console.log(1);
 				Roles.Assign(creep);
 			}
@@ -70,7 +61,7 @@ const managment = {
 
 
 	run_each_tick() {
-
+		
 		managment.start_of_tick();
 		managment.creep_spawning();
 		managment.creep_action();

@@ -36,7 +36,7 @@ const Targets = {
 		} else if(creep.carry.energy == creep.carryCapacity) {
 			switch(creep.memory.role){
 				case "harvester":
-					creep.memory.Target = creep.pos.findClosestByPath(Targets.Containers(creep.room, true));//needs to be container closest by position
+					creep.memory.Target = creep.pos.findClosestByPath(Targets.Containers(creep.room, "harvester"));//needs to be container closest by position
 					creep.memory.Action = "transfer";
 					break;
 				case "upgrader":
@@ -55,7 +55,7 @@ const Targets = {
 		} else if(creep.carry.energy < creep.carryCapacity){
 			switch(creep.memory.role){
 				case "harvester":
-					creep.memory.Target = creep.pos.findClosestByPath(Targets.Containers(creep.room, true));
+					creep.memory.Target = creep.pos.findClosestByPath(Targets.Containers(creep.room, "harvester"));
 					break;
 				case "upgrader":
 					creep.memory.Target = creep.memory.Target;

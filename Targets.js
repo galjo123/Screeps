@@ -30,8 +30,8 @@ const Targets = {
 		return sources;
 	},
 
-	Containers(room, harvester){
-		if(harvester){
+	Containers(room, searcher){
+		if(searcher == "harvester"){
 			return room.find(FIND_STRUCTURES, {filter: structure => {
 			 	if(structure.structureType == STRUCTURE_CONTAINER || structure.structureType == STRUCTURE_STORAGE){
 			 		return structure.store.energy < structure.storeCapacity;
@@ -39,7 +39,10 @@ const Targets = {
 			 		return structure.energy < structure.energyCapacity;
 			 	}
 			}});
-		} else { //for stuff that's not harvester
+		} else if(searcher == "spawn"){
+			return _.filter(room.find(FIND_STRUCTURES), structure => structure.structureType == STRUCTURE_CONTAINER ||
+																			structure.structureType == STRUCTURE_STORAGE);
+		} else {
 			return room.find(FIND_STRUCTURES, {filter: structure => {
 				if(structure.structureType == STRUCTURE_CONTAINER || structure.structureType == STRUCTURE_STORAGE){
 			 		return structure.store.energy > 0;
