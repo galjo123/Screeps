@@ -1,6 +1,7 @@
 const Make = {
 	Harvester(spawn){
 		const Targets = require("Targets");
+		const Body_Parts = require("Body_Parts");
 		
 		const harvester_number = _.filter(spawn.room.memory.roomInfo.my_creeps, creep => creep.memory.role == "harvester").length;
 		const harvesting_spots = spawn.room.memory.roomInfo.E_harvesting_spots;
@@ -13,7 +14,7 @@ const Make = {
 
 		if(!spawn.spawning && harvester_number < available_spots){
 			name = "Harvester_" + Game.time;
-			spawn.spawnCreep([WORK,CARRY,MOVE], name, {memory: {role: "harvester",
+			spawn.spawnCreep(Body_Parts.get(spawn), name, {memory: {role: "harvester",
 																state: "SPAWNING",
 																Target: "",
 																Permanent_Target: "",
@@ -23,13 +24,14 @@ const Make = {
 
 	Worker(spawn){
 		const Spawn_Role = require("Assign_Spawn_Role");
+		const Body_Parts = require("Body_Parts");
 		
 		const worker_number = _.filter(spawn.room.memory.roomInfo.my_creeps, creep => creep.memory.role != "harvester").length;
 		let name;
 
 		if(!spawn.spawning && worker_number < 6){
 			name = "Worker_" + Game.time;
-			spawn.spawnCreep([WORK,CARRY,MOVE], name, {memory: {role: Spawn_Role.Assign(spawn),
+			spawn.spawnCreep(Body_Parts.get(spawn), name, {memory: {role: Spawn_Role.Assign(spawn),
 																state: "SPAWNING", 
 																Target: "", 
 																Permanent_Target: "", 
