@@ -23,15 +23,30 @@ const managment = {
 				room.memory.Counter = 0;
 			}
 		});
-
 	},
 /////////CREEP_SPAWNING//////////////////////////////
 	creep_spawning(){
 		const Make = require("Creep_Spawner");
-
+		const Targets = require("Targets");
+		
 		do_for.All("spawns", spawn => {
-			Make.Harvester(spawn);
-			Make.Worker(spawn);
+			const harvester_number = _.filter(spawn.room.memory.roomInfo.my_creeps, creep => creep.memory.role == "harvester").length;
+			const worker_number = _.filter(spawn.room.memory.roomInfo.my_creeps, creep => creep.memory.role != "harvester").length;
+
+			const harvesting_spots = spawn.room.memory.roomInfo.E_harvesting_spots;
+			let available_spots = harvesting_spots;
+
+			if(!Targets.Containers(spawn.room, "spawn").length){
+				available_spots = spawn.room.memory.roomInfo.sources.length;
+			}
+
+			if(!spawn.spawning && harvester_number < available_spots){
+				Make.Harvester(spawn);
+			} else if(!spawn.spawning && worker_number < 6){
+				Make.Worker(spawn);
+			} else {
+				Make.Soldier(spawn);
+			}
 			/*the function will require when to set what role as in if there are construction sites available make it so creep's role is builder
 			the function will require upgrading of creeps
 			function will require a function telling it how many creeps it can spawn max
@@ -51,7 +66,7 @@ const managment = {
 
 			if((current_construction_sites.length - creep.room.memory.Preavious_Construction_Sites.length != 0 ||
 				current_damaged_structures.length - creep.room.memory.Preavious_Damaged_Structures.length != 0 ) &&
-				creep.memory.role != "harvester"){//needs extra conditions!!!!!!(ie. creep death)
+				creep.memory.role != "harvester"){
 				console.log(1);
 				Roles.Assign(creep);
 			}

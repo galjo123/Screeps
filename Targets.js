@@ -61,6 +61,15 @@ const Targets = {
 
 	Damaged_Structures(room){
 		return room.find(FIND_STRUCTURES,{filter: structure => structure.hits <= 0.9 * structure.hitsMax});
+	},
+
+	Enemy_Creeps(room){
+		return room.find(FIND_HOSTILE_CREEPS);
+	},
+
+	Idle_Flag(room){
+		const _ = require("lodash");
+		return _.filter(room.find(FIND_FLAGS), flag => flag.color == COLOR_RED);
 	}
 };
 

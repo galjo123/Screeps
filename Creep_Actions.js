@@ -21,6 +21,10 @@ const Creep_Action = {
 	
 	withdraw(creep,target){
 		return creep.withdraw(target, RESOURCE_ENERGY);
+	},
+
+	rangedAttack(creep, target){
+		return creep.rangedAttack(target);
 	}
 };
 

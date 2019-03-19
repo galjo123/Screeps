@@ -37,6 +37,20 @@ const Make = {
 																Permanent_Target: "", 
 																Action: ""}});
 		}
+	},
+
+	Soldier(spawn){
+		const soldier_number = _.filter(spawn.room.memory.roomInfo.my_creeps, creep => creep.memory.role == "soldier").length;
+		let name;
+
+		if(!spawn.spawning && soldier_number < 0){
+			name = "Soldier_" + Game.time;
+			spawn.spawnCreep([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,RANGED_ATTACK,MOVE], name, {memory: {role: "ranged_soldier",
+																state: "SPAWNING", 
+																Target: "", 
+																Permanent_Target: "", 
+																Action: ""}});
+		}
 	}
 };
 

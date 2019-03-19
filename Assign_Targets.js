@@ -32,6 +32,10 @@ const Targets = {
 						creep.memory.Action = "harvest";
 					}
 					break;
+				case "ranged_soldier":
+					creep.memory.Target = creep.pos.findClosestByPath(Targets.Enemy_Creeps(creep.room));
+					creep.memory.Action = "rangedAttack";
+					break;
 			}
 		} else if(creep.carry.energy == creep.carryCapacity) {
 			switch(creep.memory.role){
@@ -48,7 +52,7 @@ const Targets = {
 					creep.memory.Action = "build";
 					break;
 				case "repairer":
-					creep.memory.Target = creep.pos.findClosestByPath(Targets.Damaged_Structures(creep.room));//could use a better algorithm
+					creep.memory.Target = creep.pos.findClosestByPath(Targets.Damaged_Structures(creep.room));
 					creep.memory.Action = "repair";
 					break;
 			}
@@ -65,7 +69,7 @@ const Targets = {
 					creep.memory.Action = "build";
 					break;
 				case "repairer":
-					creep.memory.Target = creep.pos.findClosestByPath(Targets.Damaged_Structures(creep.room));//could use a better algorithm
+					creep.memory.Target = creep.pos.findClosestByPath(Targets.Damaged_Structures(creep.room));
 					creep.memory.Action = "repair";
 					break;
 			}
