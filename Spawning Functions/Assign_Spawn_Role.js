@@ -8,7 +8,7 @@ const Spawn_Role = {
 		const ratio = 0.05;
 
 		if(upgrader_number != 0){
-			if(Targets.Damaged_Structures(spawn.room).length > 0 && (repairer_number/spawn.room.find(FIND_STRUCTURES).length <= ratio || repairer_number == 0)){
+			if(Targets.Damaged_Structures(spawn.room).length > 0 && repairer_number == 0){
 				return "repairer";
 			} else if(Targets.Construction_Sites(spawn.room).length > 0){
 				return "builder";

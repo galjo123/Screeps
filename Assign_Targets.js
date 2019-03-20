@@ -60,9 +60,11 @@ const Targets = {
 			switch(creep.memory.role){
 				case "harvester":
 					creep.memory.Target = creep.pos.findClosestByPath(Targets.Containers(creep.room, "harvester"));
+					creep.memory.Action = "transfer";
 					break;
 				case "upgrader":
-					creep.memory.Target = creep.memory.Target;
+					creep.memory.Target = Targets.Controller(creep.room);
+					creep.memory.Action = "upgradeController";
 					break;
 				case "builder":
 					creep.memory.Target = creep.pos.findClosestByPath(Targets.Construction_Sites(creep.room));

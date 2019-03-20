@@ -69,7 +69,7 @@ const Targets = {
 
 	Idle_Flag(room){
 		const _ = require("lodash");
-		return _.filter(room.find(FIND_FLAGS), flag => flag.color == COLOR_RED);
+		return _.filter(room.find(FIND_FLAGS), flag => flag.color == COLOR_GREY)[0];
 	}
 };
 

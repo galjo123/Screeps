@@ -17,7 +17,7 @@ const Worker_State_Machine = {
 				break;
 			case "IDLE":
 				Targets.Assign(creep);
-				creep.moveTo(Game.flags["IDLE_FLAG"]);///////////////!!!!!!!!!!!!!NEEDS_RETESTING_AND_CHANGING
+				creep.moveTo(Other_Targets.Idle_Flag(creep.room));
 				if(creep.memory.Target.id == 0 || creep.memory.Target == ""){
 					Permanent_Targets.Assign(creep);
 				}
@@ -30,7 +30,7 @@ const Worker_State_Machine = {
 				break;
 			case "WORKING":
 /////////////////CREEP_DOESN'T_HAVE_TARGETS_ANYMORE////////////////////////////
-				if(creep.memory.Target.id == 0){
+				if(creep.memory.Target.id == 0 || target == 0){
 					creep.memory.state = "IDLE";
 				}
 				Creep_Action[creep.memory.Action](creep, target);
@@ -42,6 +42,7 @@ const Worker_State_Machine = {
 					Targets.Assign(creep);
 				}
 				if(target.hits == target.hitsMax && creep.memory.Action == "repair"){
+					console.log(1);
 					Targets.Assign(creep);
 				}
 				if(target.structureType == STRUCTURE_CONTAINER || target.structureType == STRUCTURE_STORAGE){

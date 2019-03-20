@@ -47,10 +47,7 @@ const managment = {
 			} else {
 				Make.Soldier(spawn);
 			}
-			/*the function will require when to set what role as in if there are construction sites available make it so creep's role is builder
-			the function will require upgrading of creeps
-			function will require a function telling it how many creeps it can spawn max
-			harvesters require spawning numbers lowered until the room is a bit higher*/
+			/*function will require a function telling it how many creeps it can spawn max*/
 		});
 	},
 /////////CREEP_ORDERS//////////////////////////////
@@ -67,7 +64,7 @@ const managment = {
 			if((current_construction_sites.length - creep.room.memory.Preavious_Construction_Sites.length != 0 ||
 				current_damaged_structures.length - creep.room.memory.Preavious_Damaged_Structures.length != 0 ) &&
 				creep.memory.role != "harvester"){
-				console.log(1);
+				console.log(creep.memory.role);
 				Roles.Assign(creep);
 			}
 			Worker_State_Machine.run(creep);
