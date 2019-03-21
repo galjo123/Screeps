@@ -40,7 +40,7 @@ const Make = {
 	},
 
 	Soldier(spawn){
-		const soldier_number = _.filter(spawn.room.memory.roomInfo.my_creeps, creep => creep.memory.role == "soldier").length;
+		const soldier_number = _.filter(spawn.room.memory.roomInfo.my_creeps, creep => creep.memory.role == "ranged_soldier").length;
 		let name;
 
 		if(!spawn.spawning && soldier_number < 0){

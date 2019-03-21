@@ -63,8 +63,7 @@ const managment = {
 
 			if((current_construction_sites.length - creep.room.memory.Preavious_Construction_Sites.length != 0 ||
 				current_damaged_structures.length - creep.room.memory.Preavious_Damaged_Structures.length != 0 ) &&
-				creep.memory.role != "harvester"){
-				console.log(creep.memory.role);
+				creep.memory.role == "upgrader" || creep.memory.role == "builder" || creep.memory.role == "repairer"){
 				Roles.Assign(creep);
 			}
 			Worker_State_Machine.run(creep);

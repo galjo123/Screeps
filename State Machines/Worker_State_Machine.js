@@ -42,11 +42,10 @@ const Worker_State_Machine = {
 					Targets.Assign(creep);
 				}
 				if(target.hits == target.hitsMax && creep.memory.Action == "repair"){
-					console.log(1);
 					Targets.Assign(creep);
 				}
-				if(target.structureType == STRUCTURE_CONTAINER || target.structureType == STRUCTURE_STORAGE){
-					if(target.store.energy == 0 && creep.memory.Action == "withdraw"){
+				if((target.structureType == STRUCTURE_CONTAINER || target.structureType == STRUCTURE_STORAGE) && creep.memory.Action == "withdraw"){
+					if(target.store.energy == 0){
 						Targets.Assign(creep);
 					}
 				}
