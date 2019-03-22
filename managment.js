@@ -24,6 +24,27 @@ const managment = {
 			}
 		});
 	},
+
+	structure_orders(){
+		do_for.All("rooms", room =>{
+			const Targets = require("Targets");
+
+			for(let id in Targets.Towers(room)){
+				const tower = Targets.Towers(room)[id];
+
+				if(Targets.Enemy_Creeps(room).length){
+					const enemy_creep = tower.pos.findClosestByRange(Targets.Enemy_Creeps(room));
+					tower.attack(enemy_creep);
+				} else if(Targets.Damaged_Structures(room).length){
+					const damaged_structure = tower.pos.findClosestByRange(Targets.Damaged_Structures(room));
+					tower.repair(damaged_structure);
+				} else if(Targets.Damaged_Walls(room).length){
+					const damaged_wall = tower.pos.findClosestByRange(Targets.Damaged_Walls(room));
+					tower.repair(damaged_wall);
+				}
+			}
+		});
+	},
 /////////CREEP_SPAWNING//////////////////////////////
 	creep_spawning(){
 		const Make = require("Creep_Spawner");
@@ -74,6 +95,7 @@ const managment = {
 	run_each_tick() {
 		
 		managment.start_of_tick();
+		managment.structure_orders();
 		managment.creep_spawning();
 		managment.creep_action();
 	}

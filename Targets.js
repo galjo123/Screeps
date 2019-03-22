@@ -60,7 +60,15 @@ const Targets = {
 	},
 
 	Damaged_Structures(room){
-		return room.find(FIND_STRUCTURES,{filter: structure => structure.hits <= 0.9 * structure.hitsMax});
+		return room.find(FIND_STRUCTURES,{filter: structure => structure.structureType != STRUCTURE_WALL && structure.hits <= 0.9 * structure.hitsMax});
+	},
+
+	Damaged_Walls(room){
+		return room.find(FIND_STRUCTURES,{filter: structure => structure.structureType == STRUCTURE_WALL && structure.hits <= 0.9 * structure.hitsMax});
+	},
+
+	Towers(room){
+		return room.find(FIND_MY_STRUCTURES, {filter: structure => structure.structureType == STRUCTURE_TOWER});
 	},
 
 	Enemy_Creeps(room){

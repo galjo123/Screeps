@@ -13,7 +13,7 @@ const Make = {
 		}
 
 		if(!spawn.spawning && harvester_number < available_spots){
-			name = "Harvester_" + Game.time;
+			name = "Harvester";
 			spawn.spawnCreep(Body_Parts.get(spawn), name, {memory: {role: "harvester",
 																state: "SPAWNING",
 																Target: "",
@@ -30,7 +30,7 @@ const Make = {
 		let name;
 
 		if(!spawn.spawning && worker_number < 6){
-			name = "Worker_" + Game.time;
+			name = "Worker";
 			spawn.spawnCreep(Body_Parts.get(spawn), name, {memory: {role: Spawn_Role.Assign(spawn),
 																state: "SPAWNING", 
 																Target: "", 
@@ -44,7 +44,7 @@ const Make = {
 		let name;
 
 		if(!spawn.spawning && soldier_number < 0){
-			name = "Soldier_" + Game.time;
+			name = "Soldier";
 			spawn.spawnCreep([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,RANGED_ATTACK,MOVE], name, {memory: {role: "ranged_soldier",
 																state: "SPAWNING", 
 																Target: "", 
