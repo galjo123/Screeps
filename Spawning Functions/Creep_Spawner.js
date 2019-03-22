@@ -44,7 +44,7 @@ const Make = {
 		let name;
 
 		if(!spawn.spawning && soldier_number < 0){
-			name = "Soldier_" + Game.time;
+			name = "Soldier_" + (soldier_number + 1);
 			spawn.spawnCreep([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,RANGED_ATTACK,MOVE], name, {memory: {role: "ranged_soldier",
 																state: "SPAWNING", 
 																Target: "", 
