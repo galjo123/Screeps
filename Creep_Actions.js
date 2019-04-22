@@ -1,10 +1,12 @@
+const Resource = require("Resources");
+
 const Creep_Action = {
 	harvest(creep, target){
 		return creep.harvest(target);
 	},
 
 	transfer(creep, target){
-		return creep.transfer(target, RESOURCE_ENERGY);
+		return creep.transfer(target, Resource.get(creep.memory.role));
 	},
 	
 	upgradeController(creep, target){
@@ -20,7 +22,7 @@ const Creep_Action = {
 	},
 	
 	withdraw(creep,target){
-		return creep.withdraw(target, RESOURCE_ENERGY);
+		return creep.withdraw(target, Resource.get(creep.memory.role));
 	},
 
 	rangedAttack(creep, target){

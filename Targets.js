@@ -1,12 +1,11 @@
 const Targets = {
 	Sources(room, harvester){
 		const _ = require("lodash");
-		const do_for = require("do_for_All");
-		const sourcekeepers = room.memory.roomInfo.sourcekeepers;
+		const sourcekeeper_lairs = room.memory.roomInfo.sourcekeeper_lairs;
 
 		let sources = room.find(FIND_SOURCES);
 
-		sourcekeepers.forEach(sourcekeeper => {
+		sourcekeeper_lairs.forEach(sourcekeeper => {
 			const guarded_source = sourcekeeper.pos.findClosestByPath(sources);
 			_.pull(sources, guarded_source);
 		});
@@ -20,7 +19,20 @@ const Targets = {
 						assigned_creeps++;
 					}
 				}
-				if(assigned_creeps >= room.memory.roomInfo.spots_per_source[source.id]){
+
+				let available_spots = room.memory.roomInfo.spots_per_source[source.id];
+
+				if(room.energyCapacityAvailable < 600 && room.energyCapacityAvailable >= 450 && available_spots > 4){
+					available_spots = 4;
+				} else if(room.energyCapacityAvailable < 900 && room.energyCapacityAvailable >= 600 && available_spots > 3){
+					available_spots = 3;
+				} else if(room.energyCapacityAvailable < 1800 && room.energyCapacityAvailable >= 900 && available_spots > 2){
+					available_spots = 2;
+				} else if(room.energyCapacityAvailable >= 1800 && available_spots > 1){
+					available_spots = 1;
+				}
+				
+				if(assigned_creeps >= available_spots){
 					return true;
 				}
 				return false;
@@ -31,17 +43,26 @@ const Targets = {
 	},
 
 	Containers(room, searcher){
+		const _ = require("lodash");
 		if(searcher == "harvester"){
-			return room.find(FIND_STRUCTURES, {filter: structure => {
-			 	if(structure.structureType == STRUCTURE_CONTAINER || structure.structureType == STRUCTURE_STORAGE){
-			 		return structure.store.energy < structure.storeCapacity;
-			 	} else {
-			 		return structure.energy < structure.energyCapacity;
-			 	}
+			let containers;
+			containers = room.find(FIND_STRUCTURES, {filter: structure => {
+			 		return structure.energy < structure.energyCapacity || (structure.structureType == STRUCTURE_TERMINAL && structure.store.energy <= 5000);
 			}});
+			
+			if(containers.length == 0){
+				containers = room.find(FIND_STRUCTURES, {filter: structure => {
+					if(structure.structureType == STRUCTURE_CONTAINER || structure.structureType == STRUCTURE_STORAGE){
+						return structure.store.energy < structure.storeCapacity;
+					}
+				}});
+			}
+			return containers;
 		} else if(searcher == "spawn"){
 			return _.filter(room.find(FIND_STRUCTURES), structure => structure.structureType == STRUCTURE_CONTAINER ||
-																			structure.structureType == STRUCTURE_STORAGE);
+																	structure.structureType == STRUCTURE_STORAGE);
+		}else if(searcher == "miner"){
+			return _.filter(room.find(FIND_STRUCTURES), structure => structure.structureType == STRUCTURE_TERMINAL );
 		} else {
 			return room.find(FIND_STRUCTURES, {filter: structure => {
 				if(structure.structureType == STRUCTURE_CONTAINER || structure.structureType == STRUCTURE_STORAGE){
@@ -60,15 +81,15 @@ const Targets = {
 	},
 
 	Damaged_Structures(room){
-		return room.find(FIND_STRUCTURES,{filter: structure => (structure.structureType != STRUCTURE_WALL ||
+		return room.find(FIND_STRUCTURES,{filter: structure => (structure.structureType != STRUCTURE_WALL &&
 																structure.structureType != STRUCTURE_RAMPART) && 
-																structure.hits <= 0.9 * structure.hitsMax});
+																structure.hits <= 0.8 * structure.hitsMax});
 	},
 
 	Damaged_Walls(room){
 		return room.find(FIND_STRUCTURES,{filter: structure => (structure.structureType == STRUCTURE_WALL ||
 																structure.structureType == STRUCTURE_RAMPART) && 
-																structure.hits <= 0.9 * structure.hitsMax});
+																structure.hits <= 0.001 * structure.hitsMax});
 	},
 
 	Towers(room){
@@ -79,9 +100,18 @@ const Targets = {
 		return room.find(FIND_HOSTILE_CREEPS);
 	},
 
+	Damaged_Creeps(room){
+		const _ = require("lodash");
+		return _.filter(room.find(FIND_MY_CREEPS), creep => creep.hits < creep.hitsMax);
+	},
+
 	Idle_Flag(room){
 		const _ = require("lodash");
 		return _.filter(room.find(FIND_FLAGS), flag => flag.color == COLOR_GREY)[0];
+	},
+
+	Minerals(room){
+		return room.find(FIND_MINERALS);
 	}
 };
 

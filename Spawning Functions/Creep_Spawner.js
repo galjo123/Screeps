@@ -3,17 +3,10 @@ const Make = {
 		const Targets = require("Targets");
 		const Body_Parts = require("Body_Parts");
 		
-		const harvester_number = _.filter(spawn.room.memory.roomInfo.my_creeps, creep => creep.memory.role == "harvester").length;
-		const harvesting_spots = spawn.room.memory.roomInfo.E_harvesting_spots;
-		let name,
-			available_spots = harvesting_spots;
+		let name;
 
-		if(!Targets.Containers(spawn.room, "spawn").length){
-			available_spots = spawn.room.memory.roomInfo.sources.length;
-		}
-
-		if(!spawn.spawning && harvester_number < available_spots){
-			name = "Harvester_" + (harvester_number + 1);
+		if(!spawn.spawning){
+			name = "Harvester_" + Game.time;
 			spawn.spawnCreep(Body_Parts.get(spawn), name, {memory: {role: "harvester",
 																state: "SPAWNING",
 																Target: "",
@@ -26,11 +19,10 @@ const Make = {
 		const Spawn_Role = require("Assign_Spawn_Role");
 		const Body_Parts = require("Body_Parts");
 		
-		const worker_number = _.filter(spawn.room.memory.roomInfo.my_creeps, creep => creep.memory.role != "harvester").length;
 		let name;
 
-		if(!spawn.spawning && worker_number < 6){
-			name = "Worker_" + (worker_number + 1);
+		if(!spawn.spawning){
+			name = "Worker_" + Game.time;
 			spawn.spawnCreep(Body_Parts.get(spawn), name, {memory: {role: Spawn_Role.Assign(spawn),
 																state: "SPAWNING", 
 																Target: "", 
@@ -39,13 +31,13 @@ const Make = {
 		}
 	},
 
-	Soldier(spawn){
-		const soldier_number = _.filter(spawn.room.memory.roomInfo.my_creeps, creep => creep.memory.role == "ranged_soldier").length;
+	Miner(spawn){
+		const Body_Parts = require("Body_Parts");
 		let name;
 
-		if(!spawn.spawning && soldier_number < 0){
-			name = "Soldier_" + (soldier_number + 1);
-			spawn.spawnCreep([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,RANGED_ATTACK,MOVE], name, {memory: {role: "ranged_soldier",
+		if(!spawn.spawning){
+			name = "Miner_" + Game.time;
+			spawn.spawnCreep([WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE]/*Body_Parts.get(spawn)*/, name, {memory: {role: "miner",
 																state: "SPAWNING", 
 																Target: "", 
 																Permanent_Target: "", 

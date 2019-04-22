@@ -1,4 +1,4 @@
 module.exports.loop = () => {
-	const manage = require ("managment");
-	manage.run_each_tick();
+	const Manage = require ("Managment");
+	Manage.Run_Each_Tick();
 };

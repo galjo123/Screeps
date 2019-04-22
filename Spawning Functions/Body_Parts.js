@@ -6,11 +6,21 @@ const Body_Parts = {
 		let body_parts;
 
 		if(available_energy >= 200){
-			const w = Math.floor(available_energy/2/100);
+			let w = Math.floor(available_energy/2/100);
 			available_energy -= w * 100;
-			const m = Math.floor(available_energy/2/50);
+			let m = Math.floor(available_energy/2/50);
 			available_energy -= m * 50;
-			const c = Math.floor(available_energy/50);
+			let c = Math.floor(available_energy/50);
+			if(w > 11){
+				w = 11;
+			}
+			if(c > 11){
+				c = 10;
+			}
+			if(m > 11){
+				m = 11;
+			}
+
 			body_parts = Body_Parts_Array.get(w,c,m);
 		}
 

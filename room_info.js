@@ -21,7 +21,7 @@ class room_info {
 		this.tzervo_spawns = _.filter(FIND_SPAWNS, {owner: {username: "tzervo"}});
 		this.tzervo_construction_sites = _.filter(FIND_CONSTRUCTION_SITES, {owner: {username: "tzervo"}});*/
 ///////////////PLACEHOLDER////////////////////////////////////////
-		this.sourcekeepers = _.remove(this.enemy_creeps, {owner: {username: "Source Keeper"}});
+		this.sourcekeeper_lairs = _.remove(this.enemy_structures, {owner: {username: "Source Keeper"}});
 		
 		this.spots_per_source = new Map();
 		this.E_harvesting_spots = 0;

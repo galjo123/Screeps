@@ -18,15 +18,13 @@ const Worker_State_Machine = {
 			case "IDLE":
 				Targets.Assign(creep);
 				creep.moveTo(Other_Targets.Idle_Flag(creep.room));
+
 				if(creep.memory.Target.id == 0 || creep.memory.Target == ""){
 					Permanent_Targets.Assign(creep);
 				}
-/////////////////CREEP_GETS_A_TARGET////////////////////////////
 				if(target){
 					creep.memory.state = "WORKING";
 				}
-/////////////////IN_CASE_CREEP_REMAINS_IDLE////////////////////
-				
 				break;
 			case "WORKING":
 /////////////////CREEP_DOESN'T_HAVE_TARGETS_ANYMORE////////////////////////////
@@ -44,7 +42,12 @@ const Worker_State_Machine = {
 				if(target.hits == target.hitsMax && creep.memory.Action == "repair"){
 					Targets.Assign(creep);
 				}
-				if((target.structureType == STRUCTURE_CONTAINER || target.structureType == STRUCTURE_STORAGE) && creep.memory.Action == "withdraw"){
+				if(creep.carry.H == creep.carryCapacity && creep.memory.Action == "harvest"){
+					Targets.Assign(creep);
+				}
+				if((target.structureType == STRUCTURE_CONTAINER || target.structureType == STRUCTURE_STORAGE) &&
+					creep.memory.Action == "withdraw" &&
+					target.hits > 0){
 					if(target.store.energy == 0){
 						Targets.Assign(creep);
 					}
