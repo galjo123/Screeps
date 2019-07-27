@@ -1,21 +1,24 @@
+const Convert_to_Object = require("Memory_to_Object_Converter");
+
 const Targets = {
 	Sources(room, harvester){
 		const _ = require("lodash");
-		const do_for = require("do_for_All");
-		const sourcekeepers = room.memory.roomInfo.sourcekeepers;
+		const sourcekeeper_lairs = room.memory.Dynamic_Room_Info.Sourcekeeper_Lairs;
+		const sources_as_memory_objects = room.memory.Static_Room_Info.Sources;
+		let sources = [];
 
-		let sources = room.find(FIND_SOURCES);
+		Convert_to_Object.Execute(sources_as_memory_objects,sources);
 
-		sourcekeepers.forEach(sourcekeeper => {
-			const guarded_source = sourcekeeper.pos.findClosestByPath(sources);
+		sourcekeeper_lairs.forEach(sourcekeeper_lair => {
+			const guarded_source = sourcekeeper_lair.pos.findClosestByRange(sources);
 			_.pull(sources, guarded_source);
 		});
 		
 		if(harvester){
 			_.remove(sources, source => {
 				let assigned_creeps = 0;
-				for(let i in Game.rooms[room.name].find(FIND_MY_CREEPS)){
-					const creep = Game.rooms[room.name].find(FIND_MY_CREEPS)[i];
+				for(let name in Game.creeps){
+					const creep = Game.creeps[name];
 					if(creep.memory.Permanent_Target.id == source.id){
 						assigned_creeps++;
 					}
@@ -26,29 +29,33 @@ const Targets = {
 				return false;
 			});
 		}
-
 		return sources;
 	},
 
-	Containers(room, searcher){
-		if(searcher == "harvester"){
-			return room.find(FIND_STRUCTURES, {filter: structure => {
-			 	if(structure.structureType == STRUCTURE_CONTAINER || structure.structureType == STRUCTURE_STORAGE){
-			 		return structure.store.energy < structure.storeCapacity;
-			 	} else {
-			 		return structure.energy < structure.energyCapacity;
-			 	}
-			}});
-		} else if(searcher == "spawn"){
-			return _.filter(room.find(FIND_STRUCTURES), structure => structure.structureType == STRUCTURE_CONTAINER ||
-																			structure.structureType == STRUCTURE_STORAGE);
-		} else {
-			return room.find(FIND_STRUCTURES, {filter: structure => {
-				if(structure.structureType == STRUCTURE_CONTAINER || structure.structureType == STRUCTURE_STORAGE){
-			 		return structure.store.energy > 0;
-			 	}
-			}});
-		}
+	Containers(room){
+		const _ = require("lodash");
+		const structures_as_memory_objects = room.memory.Dynamic_Room_Info.Structures;
+		let structures = [];
+
+		Convert_to_Object.Execute(structures_as_memory_objects, structures);
+
+		return _.filter(structures, structure => {
+			return structure.structureType == STRUCTURE_CONTAINER ||
+					structure.structureType == STRUCTURE_STORAGE;
+		});
+	},
+
+	Spawns(room){
+		const _ = require("lodash");
+		const structures_as_memory_objects = room.memory.Dynamic_Room_Info.Structures;
+		let structures = [];
+
+		Convert_to_Object.Execute(structures_as_memory_objects, structures);
+
+		return _.filter(structures, structure => {
+			return structure.structureType == STRUCTURE_SPAWN ||
+					structure.structureType == STRUCTURE_EXTENSION;
+		});
 	},
 
 	Controller(room){
@@ -56,32 +63,50 @@ const Targets = {
 	},
 
 	Construction_Sites(room){
-		return room.find(FIND_CONSTRUCTION_SITES);
+		const construction_sites_as_memory_objects = room.memory.Dynamic_Room_Info.Construction_Sites;
+		let construction_sites = [];
+
+		Convert_to_Object.Execute(construction_sites_as_memory_objects, construction_sites);
+
+		return construction_sites;
 	},
 
-	Damaged_Structures(room){
-		return room.find(FIND_STRUCTURES,{filter: structure => (structure.structureType != STRUCTURE_WALL ||
-																structure.structureType != STRUCTURE_RAMPART) && 
-																structure.hits <= 0.9 * structure.hitsMax});
-	},
+	Maintenance(room){
+		const _ = require("lodash");
+		const structures_as_memory_objects = room.memory.Dynamic_Room_Info.Structures;
+		let structures = [];
 
-	Damaged_Walls(room){
-		return room.find(FIND_STRUCTURES,{filter: structure => (structure.structureType == STRUCTURE_WALL ||
-																structure.structureType == STRUCTURE_RAMPART) && 
-																structure.hits <= 0.9 * structure.hitsMax});
+		Convert_to_Object.Execute(structures_as_memory_objects, structures);
+
+		return _.filter(structures, structure => {
+			return structure.hits <= 0.8 * structure.hitsMax;
+		});
 	},
 
 	Towers(room){
-		return room.find(FIND_MY_STRUCTURES, {filter: structure => structure.structureType == STRUCTURE_TOWER});
+		const _ = require("lodash");
+		const structures_as_memory_objects = room.memory.Dynamic_Room_Info.Structures;
+		let structures = [];
+
+		Convert_to_Object.Execute(structures_as_memory_objects, structures);
+
+		return _.filter(structures, structure => structure.structureType == STRUCTURE_TOWER);
 	},
 
 	Enemy_Creeps(room){
-		return room.find(FIND_HOSTILE_CREEPS);
+		const enemy_creeps_as_memory_objects = room.memory.Dynamic_Room_Info.Enemy_Creeps;
+		let enemy_creeps = [];
+
+		Convert_to_Object.Execute(enemy_creeps_as_memory_objects, enemy_creeps);
+		
+		return enemy_creeps;
 	},
 
 	Idle_Flag(room){
 		const _ = require("lodash");
-		return _.filter(room.find(FIND_FLAGS), flag => flag.color == COLOR_GREY)[0];
+		const flags = room.memory.Dynamic_Room_Info.Flags;
+
+		return _.filter(flags, flag => flag.name == "IDLE_FLAG")[0];
 	}
 };
 

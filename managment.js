@@ -1,32 +1,40 @@
-const do_for = require("do_for_All");
 
-const managment = {
+const Run = require("Run");
 
-	start_of_tick(){
+const Managment = {
+
+	Start_of_Tick(){
 /////////MEMORY_DELETION/////////////////////////////
-		for(let name in Memory.creeps){
+		/*for(let name in Memory.creeps){
 			if(!Game.creeps[name]){
 				delete(Memory.creeps[name]);
 			}
-		}
+		}*/
 /////////ROOM_INFO_UPDATE/////////////////////////////
-		do_for.All("rooms", room => {
-			const room_info = require("room_info");
+		Run.All("rooms", room => {
+			const Dynamic_Room_Info = require("Dynamic_Room_Info");
+			const Static_Room_Info = require("Static_Room_Info");
 			const Targets = require("Targets");
-			
-			room.memory.roomInfo = new room_info(room);
+
+			/*if(!room.memory.Static_Room_Info){
+				room.memory.Static_Room_Info = new Static_Room_Info(room);
+			}*/
+			/*
+			room.memory.Dynamic_Room_Info = new Dynamic_Room_Info(room);*/
 //////////FOR_DETECTING_CHANGES_IN_ROOM////////////
-			room.memory.Counter++;
-			if(room.memory.Counter % 3 == 0){
+			/*room.memory.Counter++;
+			if(room.memory.Counter % 2 == 0){
 				room.memory.Preavious_Construction_Sites = Targets.Construction_Sites(room);
-				room.memory.Preavious_Damaged_Structures = Targets.Damaged_Structures(room);
+				room.memory.Preavious_Damaged_Structures = Targets.Maintenance(room);
 				room.memory.Counter = 0;
-			}
+			}*/
 		});
 	},
 
-	structure_orders(){
-		do_for.All("rooms", room =>{
+
+
+	/*structure_orders(){
+		Run.All("rooms", room =>{
 			const Targets = require("Targets");
 
 			for(let id in Targets.Towers(room)){
@@ -44,14 +52,19 @@ const managment = {
 				}
 			}
 		});
-	},
+	},*/
 /////////CREEP_SPAWNING//////////////////////////////
-	creep_spawning(){
-		const Make = require("Creep_Spawner");
-		const Targets = require("Targets");
-		
-		do_for.All("spawns", spawn => {
-			const harvester_number = _.filter(spawn.room.memory.roomInfo.my_creeps, creep => creep.memory.role == "harvester").length;
+	Creep_Spawning(){
+		//const Make = require("Creep_Spawner");
+		//const Targets = require("Targets");
+		Run.All("spawns", spawn => {
+			
+			const number_of_creeps = spawn.room.memory.Dynamic_Room_Info.My_Creeps.length;
+			let name= "Creep_" + Game.time;
+			if(number_of_creeps < 2){
+				spawn.spawnCreep([WORK,CARRY,MOVE], name, {memory: {role: "harvester", state: "SPAWNING", target: {id: 0}, permanent_targets: "", action: ""}});
+			}
+			/*const harvester_number = _.filter(spawn.room.memory.roomInfo.my_creeps, creep => creep.memory.role == "harvester").length;
 			const worker_number = _.filter(spawn.room.memory.roomInfo.my_creeps, creep => creep.memory.role != "harvester").length;
 
 			const harvesting_spots = spawn.room.memory.roomInfo.E_harvesting_spots;
@@ -63,42 +76,26 @@ const managment = {
 
 			if(!spawn.spawning && harvester_number < available_spots){
 				Make.Harvester(spawn);
-			} else if(!spawn.spawning && worker_number < 6){
+			} else if(!spawn.spawning && worker_number < 3){
 				Make.Worker(spawn);
 			} else {
 				Make.Soldier(spawn);
-			}
-			/*function will require a function telling it how many creeps it can spawn max*/
+			}*/
 		});
 	},
 /////////CREEP_ORDERS//////////////////////////////
-	creep_action(){
-		do_for.All("creeps", creep => {
-			const Worker_State_Machine = require ("Worker_State_Machine");
-			const Roles = require("Assign_Roles");
-			const Targets = require("Targets");
-			
-///////////////FOR_FINDING_A_CHANGE_IN_THE_NUMBER_OF_CONSTRUCTION_SITES/////////////////////////////////////////
-			const current_construction_sites = Targets.Construction_Sites(creep.room);
-			const current_damaged_structures = Targets.Damaged_Structures(creep.room);
-
-			if((current_construction_sites.length - creep.room.memory.Preavious_Construction_Sites.length != 0 ||
-				current_damaged_structures.length - creep.room.memory.Preavious_Damaged_Structures.length != 0 ) &&
-				creep.memory.role == "upgrader" || creep.memory.role == "builder" || creep.memory.role == "repairer"){
-				Roles.Assign(creep);
-			}
-			Worker_State_Machine.run(creep);
-		});
+	Orders(){
+		const State_Machine = require("State_Machine");
+		State_Machine.Activate("Worker_State_Machine", "creep");
 	},
 
 
-	run_each_tick() {
-		
-		managment.start_of_tick();
-		managment.structure_orders();
-		managment.creep_spawning();
-		managment.creep_action();
+	Run_Each_Tick() {
+		Managment.Start_of_Tick();
+		//managment.structure_orders();
+		Managment.Creep_Spawning();
+		Managment.Orders();
 	}
 };
 
-module.exports = managment;
+module.exports = Managment;
