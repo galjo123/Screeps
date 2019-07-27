@@ -71,41 +71,41 @@ const managment = {
 		const Targets = require("Targets");
 		
 		Do_For.All("spawns", spawn => {
-			const harvester_number = _.filter(spawn.room.memory.roomInfo.my_creeps, creep => creep.memory.role == "harvester").length;
-			const worker_number = _.filter(spawn.room.memory.roomInfo.my_creeps, creep => creep.memory.role == "upgrader" || creep.memory.role == "builder" || creep.memory.role == "repairer").length;
-			const miner_number = _.filter(spawn.room.memory.roomInfo.my_creeps, creep => creep.memory.role == "miner").length;
-
-			const harvesting_spots = spawn.room.memory.roomInfo.E_harvesting_spots;
-			let available_spots = 0;
-
-			spawn.room.find(FIND_SOURCES).forEach(source => {
-				const per_source_available_spots = spawn.room.memory.roomInfo.spots_per_source[source.id];
-				
-				if(spawn.room.energyCapacityAvailable < 450 && per_source_available_spots > 4){
-					avaialble_spots += 5;
-				} else if(spawn.room.energyCapacityAvailable < 600 && spawn.room.energyCapacityAvailable >= 450 && per_source_available_spots > 4){
-					available_spots += 4;
-				} else if(spawn.room.energyCapacityAvailable < 900 && spawn.room.energyCapacityAvailable >= 600 && per_source_available_spots > 3){
-					available_spots += 3;
-				} else if(spawn.room.energyCapacityAvailable < 1800 && spawn.room.energyCapacityAvailable >= 900 && per_source_available_spots > 2){
-					available_spots += 2;
-				} else {
-					available_spots += 1;
-				}
-			});
-
-			if(!Targets.Containers(spawn.room, "spawn").length){
-				available_spots = spawn.room.memory.roomInfo.sources.length;
-			}
-
-			if(!spawn.spawning && harvester_number < available_spots){
-				Make.Harvester(spawn);
-			} else if(!spawn.spawning && worker_number < 2){
-				Make.Worker(spawn);
-			} else if(miner_number < 1){
-				Make.Miner(spawn);
-			}
-			/*function will require a function telling it how many creeps it can spawn max*/
+			if(spawn.name == "Spawn1"){const harvester_number = _.filter(spawn.room.memory.roomInfo.my_creeps, creep => creep.memory.role == "harvester").length;
+						const worker_number = _.filter(spawn.room.memory.roomInfo.my_creeps, creep => creep.memory.role == "upgrader" || creep.memory.role == "builder" || creep.memory.role == "repairer").length;
+						const miner_number = _.filter(spawn.room.memory.roomInfo.my_creeps, creep => creep.memory.role == "miner").length;
+			
+						const harvesting_spots = spawn.room.memory.roomInfo.E_harvesting_spots;
+						let available_spots = 0;
+			
+						spawn.room.find(FIND_SOURCES).forEach(source => {
+							const per_source_available_spots = spawn.room.memory.roomInfo.spots_per_source[source.id];
+							
+							if(spawn.room.energyCapacityAvailable < 450 && per_source_available_spots > 4){
+								avaialble_spots += 5;
+							} else if(spawn.room.energyCapacityAvailable < 600 && spawn.room.energyCapacityAvailable >= 450 && per_source_available_spots > 4){
+								available_spots += 4;
+							} else if(spawn.room.energyCapacityAvailable < 900 && spawn.room.energyCapacityAvailable >= 600 && per_source_available_spots > 3){
+								available_spots += 3;
+							} else if(spawn.room.energyCapacityAvailable < 1800 && spawn.room.energyCapacityAvailable >= 900 && per_source_available_spots > 2){
+								available_spots += 2;
+							} else {
+								available_spots += 1;
+							}
+						});
+			
+						if(!Targets.Containers(spawn.room, "spawn").length){
+							available_spots = spawn.room.memory.roomInfo.sources.length;
+						}
+			
+						if(!spawn.spawning && harvester_number < available_spots){
+							Make.Harvester(spawn);
+						} else if(!spawn.spawning && worker_number < 2){
+							Make.Worker(spawn);
+						} else if(miner_number < 1 && spawn.room.memory.roomInfo.minerals[0].mineralAmount != 0){
+							Make.Miner(spawn);
+						}
+						/*function will require a function telling it how many creeps it can spawn max*/}
 		});
 	},
 /////////CREEP_ORDERS//////////////////////////////
