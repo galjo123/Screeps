@@ -1,15 +1,17 @@
+const memory = require("memory");
+
 module.exports = (creep) => {
 	const Target_Assignment = require("Target_Assignment");
 
 	Target_Assignment.Execute(creep);
 
-	if(creep.memory.target.id != 0){
-		switch(creep.memory.role){
+	if(memory.creeps[creep.name].target.id != 0){
+		switch(memory.creeps[creep.name].role){
 			case "harvester":
 				if(creep.carry.energy == creep.carryCapacity){
-					creep.memory.state = "RESUPPLY";
+					memory.creeps[creep.name].state = "RESUPPLY";
 				} else {
-					creep.memory.state = "WORK";
+					memory.creeps[creep.name].state = "WORK";
 				}
 		}
 	}

@@ -2,7 +2,7 @@ const Room_State_Machine = {
 	PEACE: {
 		STATE: require("State_Peace"),
 
-		ENEMY_INVASION: require("Transition_To_War")
+		ENEMY_INVASION: require("Transition_To_War"),
 	},
 
 	SOURCE_KEEPER_TERRITORY:{

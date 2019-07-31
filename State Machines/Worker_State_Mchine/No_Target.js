@@ -1,9 +1,11 @@
+const memory = require("memory");
+
 module.exports = (creep) => {
-	if(creep.memory.target == null){
-		creep.memory.state = "IDLE";
-		creep.memory.target = {id: 0};
+	if(memory.creeps[creep.name].target == null){
+		memory.creeps[creep.name].state = "IDLE";
+		memory.creeps[creep.name].target = {id: 0};
 		
-	} else if(creep.memory.target.id == 0){
-		creep.memory.state = "IDLE";
+	} else if(memory.creeps[creep.name].target.id == 0){
+		memory.creeps[creep.name].state = "IDLE";
 	}
 };

@@ -1,5 +1,7 @@
+const memory = require("memory");
+
 module.exports = (creep) => {
 	if(!creep.spawning){
-		creep.memory.state = "IDLE";
+		memory.creeps[creep.name].state = "IDLE";
 	}
 };
