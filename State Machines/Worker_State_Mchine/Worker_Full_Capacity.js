@@ -8,7 +8,7 @@ module.exports = (creep) => {
 	
 	if(total_resources == creep.carryCapacity){
 		memory.creeps[creep.name].state = "WORK";
-		Target_Assignment.Execute(creep);
+		Target_Assignment[creep.memory.role](creep);
 		if(memory.creeps[creep.name].target.id == 0){
 			memory.creeps[creep.name].state = "IDLE";
 		}

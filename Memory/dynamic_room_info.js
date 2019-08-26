@@ -6,6 +6,8 @@ class dynamic_room_info {
 		this.structures = room.find(FIND_STRUCTURES);
 		this.construction_sites = room.find(FIND_CONSTRUCTION_SITES);
 		this.flags = room.find(FIND_FLAGS);
+		this.dropped_resources = room.find(FIND_DROPPED_RESOURCES);
+		this.tombstones = room.find(FIND_TOMBSTONES);
 ///////////////FIND_HOSTILES/////////////////////////////////////////
 		this.enemy_creeps = _.filter(room.find(FIND_HOSTILE_CREEPS), creep => creep.owner.username != "tzervo");
 		this.enemy_structures = _.filter(room.find(FIND_HOSTILE_STRUCTURES), structure => structure.owner.username != "tzervo");

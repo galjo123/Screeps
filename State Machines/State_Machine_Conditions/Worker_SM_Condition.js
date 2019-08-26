@@ -1,10 +1,10 @@
 const memory = require("memory");
 
 module.exports = (creep) => {
-	if(memory.creeps[creep.name].role == "harvester" ||
-		memory.creeps[creep.name].role == "upgrader" ||
-		memory.creeps[creep.name].role == "builder" ||
-		memory.creeps[creep.name].role == "repairer"){
+	if(creep.memory.role == "harvester" ||
+		creep.memory.role == "upgrader" ||
+		creep.memory.role == "worker" ||
+		creep.memory.role == "carrier"){
 		return true;
 	} else {
 		return false;

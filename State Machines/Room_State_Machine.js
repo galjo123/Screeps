@@ -8,7 +8,7 @@ const Room_State_Machine = {
 	SOURCE_KEEPER_TERRITORY:{
 		STATE: require("State_Source_Keeper_Territory"),
 
-		TARGET_AQUIRED: require("Transition_To_War")
+		ENEMY_INVASION: require("Transition_To_War")
 	},
 
 	WAR:{

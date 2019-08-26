@@ -3,36 +3,33 @@ const Worker_State_Machine = {
 		FINISHED_SPAWNING: require("Finished_Spawning")
 	},
 	IDLE:{
-		STATE: require("State_Idle"),
+		STATE: require("Worker_State_Idle"),
 
-		TARGET_AQUIRED: require("Target_Aquired")
+		TARGET_AQUIRED: require("Worker_Target_Aquired")
 	},
 	WORK:{
 		NO_TARGET: require("No_Target"),
+
+		INVALID_TARGET: require("Invalid_Target"),
 		
-		OUT_OF_RESOURCE: require("Out_Of_Resource"),
+		OUT_OF_RESOURCE: require("Worker_Out_Of_Resource"),
 
-		TARGET_FULL: require("Target_Full"),
+		TARGET_FULL: require("Worker_Target_Full"),
 
-		NOT_IN_RANGE: require("Not_In_Range"),
+		TARGET_REPAIRED: require("Worker_Target_Repaired"),
 
-		STATE: require("State_Action")
+		STATE: require("Worker_State_Action")
 	},
 	RESUPPLY:{
 		NO_TARGET: require("No_Target"),
 
-		FULL_CAPACITY: require("Full_Capacity"),
+		INVALID_TARGET: require("Invalid_Target"),
 
-		NOT_IN_RANGE: require("Not_In_Range"),
+		TARGET_EMPTY: require("Worker_Target_Empty"),
 
-		STATE: require("State_Action"),
-	},
-	MOVE:{
-		NO_TARGET: require("No_Target"),
+		FULL_CAPACITY: require("Worker_Full_Capacity"),
 
-		IN_RANGE: require("In_Range"),
-
-		STATE: require("State_Move")
+		STATE: require("Worker_State_Action"),
 	}
 };
 

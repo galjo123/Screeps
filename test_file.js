@@ -1,21 +1,27 @@
+const hue = [1,2,3,4];
+const nya = [];
+
 object = {
 	idle:{
-		state: (state) => {return state;},
-
-		target_aquired: (state) => {return state;}
+		state: 1
 	},
 	work:{
-		state: (state) => {return state;},
+		state: 3,
 
-		empty: (state) => {return state;}
+		empty: 4
 	}
 };
 
-const Creep_State = object.idle;
-//let output;
+const sources = {source1: {id: 123}, source2: {id:234}};
 
-for(let state in Creep_State){
-	//output = state_function("idle");
-	console.log(Creep_State[state]("idle"));
+function sum() {
+    for (var i=0; i < arguments.length; i++) {
+        if(arguments[i].length > 0){
+        	return arguments[i];
+        }
+    }
 }
 
+if(nya){
+	console.log(1);
+} else console.log(2);

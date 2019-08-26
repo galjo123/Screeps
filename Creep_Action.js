@@ -3,6 +3,10 @@ const Creep_Action = {
 		return creep.harvest(target);
 	},
 
+	pickup(creep, target){
+		return creep.pickup(target);
+	},
+
 	transfer(creep, target){
 		return creep.transfer(target, RESOURCE_ENERGY);
 	},
@@ -19,7 +23,7 @@ const Creep_Action = {
 		return creep.repair(target);
 	},
 	
-	withdraw(creep,target){
+	withdraw(creep, target){
 		return creep.withdraw(target, RESOURCE_ENERGY);
 	},
 

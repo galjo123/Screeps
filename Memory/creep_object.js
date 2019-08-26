@@ -1,9 +1,7 @@
 class creep_object {
-	constructor(role,state, permanent_target){
-		this.role = role;
-		this.state = state;
+	constructor(){
+		this.state = "SPAWNING";
 		this.target = {id:"0"};
-		this.permanent_target = permanent_target;
 		this.action = "";
 	}
 }

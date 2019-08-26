@@ -1,6 +1,6 @@
 class flag_object {
-	constructor(flag){
-		this.id = flag.id;
+	constructor(flag, flag_id){
+		this.id = flag_id;
 		this.name = flag.name;
 		this.room = flag.room;
 		this.color = flag.color;

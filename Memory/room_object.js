@@ -1,8 +1,9 @@
 const static_room_info = require("static_room_info");
+const room_development = require("room_development");
 
 class room_object {
 	constructor(room){
-		this.stage_state = "REGULAR";
+		this.room_development = new room_development(room);
 		this.counter = 0;
 		this.static_room_info = new static_room_info(room);
 		if(this.static_room_info.sourckeeper_lairs){
@@ -11,8 +12,6 @@ class room_object {
 			this.state = "PEACE";
 		}
 		this.dynamic_room_info = {};
-		this.preavious_construction_sites = {};
-		this.preavious_damaged_structures = {};
 	}
 }
 

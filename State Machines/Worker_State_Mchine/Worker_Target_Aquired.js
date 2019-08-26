@@ -1,12 +1,11 @@
 const memory = require("memory");
 
 module.exports = (creep) => {
-	const _ = require("lodash");
 	const Target_Assignment = require("Target_Assignment");
+	
+	Target_Assignment[creep.memory.role](creep);
 
-	const total_resources = _.sum(creep.carry);
-	if(total_resources == 0){
+	if(memory.creeps[creep.name].target.id != 0){
 		memory.creeps[creep.name].state = "RESUPPLY";
-		Target_Assignment.Execute(creep);
 	}
 };
