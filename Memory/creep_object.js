@@ -3,6 +3,7 @@ class creep_object {
 		this.state = "SPAWNING";
 		this.target = {id:"0"};
 		this.action = "";
+		this.current_flag = "";
 	}
 }
 

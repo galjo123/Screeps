@@ -3,21 +3,22 @@ const Targets = require("Targets");
 const Global_Targets = require("Global_Targets");
 const memory = require("memory");
 const _ = require("lodash");
+const Creep_Spawn_Time = require("Creep_Spawn_Time");
 
 const Creeps_Needed = {
 	Harvesters(){
 		let harvesters_needed = {};
 
 		Run.All("rooms", room => {
-			if(room.controller.my){
+			if(room.controller && room.controller.my){
 				let sources = memory.rooms[room.name].static_room_info.sources;
 				let spots = {};
 				const room_name = room.name;
-
+		
 				if(!harvesters_needed[room_name]){
 					harvesters_needed[room_name] = {};
 				}
-
+			
 				sources.forEach(source => {			
 					if(room.energyCapacityAvailable < 400 && memory.rooms[room.name].static_room_info.spots_per_source[source.id] >= 5){
 						spots[source.id] = memory.rooms[room.name].static_room_info.spots_per_source[source.id];
@@ -30,33 +31,34 @@ const Creeps_Needed = {
 					} else {
 						spots[source.id] = 1;
 					}
-
+			
 					let assigned_creeps = 0;
-
+			
 					for(let name in Game.creeps){
 						const creep = Game.creeps[name];
 						if(creep.memory.permanent_target.id == source.id){
 							assigned_creeps++;
 						}
 					}
-
+			
 					const permanent_target = source.id;
-					
+								
 					if(assigned_creeps < spots[source.id]){
 						const spots_left = spots[source.id] - assigned_creeps;
 						harvesters_needed[room_name][permanent_target] = spots_left;
 					}
 				});
 			} else if(Targets.Resource_Colony_Flag(room).length && memory.rooms[room.name].room_development.containers) {
-				let sources = memory.rooms[room.name].static_room_info.sources;
-
+				const room_sources = memory.rooms[room.name].static_room_info.sources;
+				let sources = room_sources.slice(room_sources.length - 1);
+			
 				const resource_colony_flag = Targets.Resource_Colony_Flag(room)[0];
 				const room_name = resource_colony_flag.memory.room_ownership;
-
+	
 				if(!harvesters_needed[room_name]){
 					harvesters_needed[room_name] = {};
 				}
-//console.log(memory.rooms.E23N24.static_room_info.sources);
+			
 				_.remove(sources, source => {
 					for(let name in Game.creeps){
 						const creep = Game.creeps[name];
@@ -66,7 +68,7 @@ const Creeps_Needed = {
 					}
 					return false;
 				});
-//console.log(memory.rooms.E23N24.static_room_info.sources);
+			
 				sources.forEach(source => {
 					const permanent_target = source.id;
 					harvesters_needed[room_name][permanent_target] = 1;
@@ -81,12 +83,17 @@ const Creeps_Needed = {
 		let upgraders_needed = {};
 
 		Run.All("rooms", room => {
-			const exsisting_room_upgraders = _.filter(memory.rooms[room.name].dynamic_room_info.my_creeps, creep => {
-													return creep.memory.role == "upgrader";
-												});
+			let exsisting_room_upgraders = 0;
+			Run.All("creeps", creep => {
+				if(creep.memory.role == "upgrader" && creep.room.name == room.name){
+					exsisting_room_upgraders++;
+				}
+			});
 
-			if(room.controller.my && !exsisting_room_upgraders.length){
-				upgraders_needed[room.name] = 1;
+			if(room.controller){
+				if(room.controller.my && exsisting_room_upgraders == 0){
+					upgraders_needed[room.name] = 1;
+				}
 			}
 		});
 		return upgraders_needed;
@@ -96,32 +103,32 @@ const Creeps_Needed = {
 		let workers_needed = {};
 
 		Run.All("rooms", room => {
-			let room_name = room.name;
+			if((room.controller && room.controller.my) || Targets.Resource_Colony_Flag(room).length){
+				let room_name = room.name;
+			
+				if(Targets.Resource_Colony_Flag(room).length){
+					const resource_colony_flag = Targets.Resource_Colony_Flag(room)[0];
+					room_name = resource_colony_flag.memory.room_ownership;
+				}
+						
+				if(!workers_needed[room_name]){
+					workers_needed[room_name] = {};
+				}
+			
 
-			if(Targets.Resource_Colony_Flag(room).length){
-				const resource_colony_flag = Targets.Resource_Colony_Flag(room)[0];
-				room_name = resource_colony_flag.memory.room_ownership;
-			}
-
-			if(!workers_needed[room_name]){
-				workers_needed[room_name] = 0;
-			}
-
-			if(Global_Targets.Construction_Sites().length){
-				workers_needed[room_name] += 2;
-			} else {
-				workers_needed[room_name] += 1;
-			}
-
-			if(room_name == room.name){
 				let already_exsisting_workers = 0;
 				Run.All("creeps", creep => {
 					if(creep.memory.role == "worker" &&
-						creep.memory.room_of_origin == [room_name]){
+						creep.memory.permanent_target == room.name){
 						already_exsisting_workers++;
 					}
 				});
-				workers_needed[room_name] -= already_exsisting_workers;
+							
+				if(Global_Targets.Objects("Construction_Sites").length && Game.rooms[room_name].controller.level < 7 && already_exsisting_workers < 2){
+					workers_needed[room_name][room.name] = 2;
+				} else if(already_exsisting_workers < 1){
+					workers_needed[room_name][room.name] = 1;
+				}
 			}
 		});
 
@@ -132,9 +139,7 @@ const Creeps_Needed = {
 		let carriers_needed = {};
 
 		Run.All("rooms", room => {
-	//console.log(room.name);
 			const source_containers = Targets.Source_Containers(room);
-	//console.log(room.name, source_containers);
 			let room_name = room.name;
 
 			if(source_containers.length){
@@ -148,23 +153,39 @@ const Creeps_Needed = {
 					carriers_needed[room_name] = {};
 				}
 
-				source_containers.forEach(container => {
-					let assigned_creeps = 0;
-			
-					for(let name in Game.creeps){
-						const creep = Game.creeps[name];
-						if(creep.memory.permanent_target.id == container.id){
-							assigned_creeps++;
+				if(Game.rooms[room_name].energyCapacityAvailable < 2000){
+					if(source_containers.length){
+						source_containers.forEach(container => {
+							let assigned_creeps = 0;
+												
+							for(let name in Game.creeps){
+								const creep = Game.creeps[name];
+								if(creep.memory.permanent_target.id == container.id/* &&
+									(creep.ticksToLive > Creep_Spawn_Time.Carrier(Game.rooms[room_name].energyAvailable)/2 || creep.spawning)*/){
+										assigned_creeps++;
+								}
+							}
+						
+							if(assigned_creeps < 1){
+								carriers_needed[room_name][container.id]++;
+							}
+						});
+					}
+				} else {
+					let already_exsisting_carriers = 0;
+					Run.All("creeps", creep => {
+						if(creep.memory.role == "carrier" &&
+						   creep.memory.permanent_target.room.name == room.name/* &&
+						   (creep.ticksToLive > Creep_Spawn_Time.Carrier(Game.rooms[room_name].energyAvailable || creep.spawning))*/){
+							already_exsisting_carriers++;
 						}
+					});
+					if(!already_exsisting_carriers){
+						carriers_needed[room_name][source_containers[0].id] = 1;
 					}
-
-					if(assigned_creeps < 1){
-						carriers_needed[room_name][container.id]++;
-					}
-				});
+				}
 			}
 		});
-//console.log(Object.keys(carriers_needed.E23N25));
 		return carriers_needed;
 	},
 
@@ -187,6 +208,51 @@ const Creeps_Needed = {
 			});
 		}
 		return explorers_needed;
+	},
+
+	Claimers(){
+		let claimers_needed = {};
+		let claim_flags = [];
+		claim_flags.push(...Global_Targets.Resource_Colony_Flags());
+		claim_flags.push(...Global_Targets.Claim_Flags());
+
+		claim_flags.forEach(flag => {
+			const room_name = flag.memory.room_ownership;
+			let assigned_creeps = 0;
+
+			if(!claimers_needed[room_name]){
+				claimers_needed[room_name] = {};
+			}
+
+			for(let creep_name in Game.creeps){
+				const creep = Game.creeps[creep_name];
+				if(creep.memory.permanent_target == flag.name){
+					assigned_creeps++;
+				}
+			}
+
+			if(!assigned_creeps){
+				claimers_needed[room_name][flag.name] = 1;
+			}
+		});
+
+		return claimers_needed;
+	},
+
+	Soldiers(){
+		const Attack_Squads_Needed = require("Attack_Squads_Needed");
+
+		let soldiers_needed = {};
+		const alpha_squad_flags = Global_Targets.Alpha_Squad_Flags();
+		const beta_squad_flags = Global_Targets.Beta_Squad_Flags();
+
+		if(alpha_squad_flags.length){
+			Attack_Squads_Needed.Execute(soldiers_needed, alpha_squad_flags, "alpha");
+		}
+		if(beta_squad_flags.length){
+			Attack_Squads_Needed.Execute(soldiers_needed, beta_squad_flags, "beta");
+		}
+		return soldiers_needed;
 	}
 };
 

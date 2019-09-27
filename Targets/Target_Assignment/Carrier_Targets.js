@@ -3,52 +3,79 @@ const Global_Targets = require("Global_Targets");
 const memory = require("memory");
 const _ = require("lodash");
 const Target_Priority = require("Target_Priority");
+const Target_Picker = require("Target_Picker");
+const differenceBy = require("differenceBy");
 
 module.exports = (creep) => {
+	const main_container = Game.getObjectById(creep.memory.permanent_target.id);
+	const room_of_origin = Game.rooms[creep.memory.room_of_origin];
+
 	if(memory.creeps[creep.name].state == "WORK"){
 		let targets = [];
 
-		const empty_containers = Global_Targets.Empty_Containers();
-		const closest_container = creep.pos.findClosestByPath(empty_containers);
-		const appropriate_empty_containers = _.filter(empty_containers, container => {
-			return container.id != creep.memory.permanent_target.id;
-		});
+		const empty_containers = Global_Targets.Objects("Empty_Containers");
+		const source_containers = Global_Targets.Objects("Source_Containers");
+		const mineral_containers = Global_Targets.Objects("Mineral_Containers");
 
-		targets = Target_Priority.Get(Global_Targets.Empty_Spawns_And_Extensions(),
-									  Global_Targets.Semi_Empty_Towers(),
-									  appropriate_empty_containers,
-									  Global_Targets.Empty_Towers());
+		const local_empty_spawns_and_extensions = Targets.Empty_Spawns_And_Extensions(room_of_origin);
+		const local_critically_empty_towers = Targets.Critically_Empty_Towers(room_of_origin);
 
-		const targets_in_room = _.filter(targets, target => {
-			return target.room.name == creep.room.name;
-		});
+		const empty_spawns_and_extensions = Global_Targets.Objects("Empty_Spawns_And_Extensions");
+		const critically_empty_towers = Global_Targets.Objects("Critically_Empty_Towers");
+		const empty_non_source_containers = differenceBy.Id(empty_containers, source_containers, mineral_containers);
+		const empty_towers = Global_Targets.Objects("Empty_Towers");
 
-		if(targets_in_room.length){
-			memory.creeps[creep.name].target = creep.pos.findClosestByPath(targets);
-		} else {
-			memory.creeps[creep.name].target = targets[0];
-		}
+		targets = Target_Priority.Get(local_empty_spawns_and_extensions,
+									  local_critically_empty_towers,
+									  empty_spawns_and_extensions,
+									  critically_empty_towers,
+									  empty_non_source_containers,
+									  empty_towers);
+
+		memory.creeps[creep.name].target = Target_Picker.Pick(creep, targets);
 		memory.creeps[creep.name].action = "transfer";
-	}
-	if(memory.creeps[creep.name].state == "RESUPPLY" || memory.creeps[creep.name].state == "IDLE"){
-		const target = Game.getObjectById(creep.memory.permanent_target.id);
-		const total_resources = _.sum(target.store);
-		/*if(Targets.Dropped_Resources(creep.room).length){
-			memory.creeps[creep.name].target = creep.pos.findClosestByPath(Targets.Dropped_Resources(creep.room));
-			memory.creeps[creep.name].action = "pickup";
-		} else */if(Targets.Tombstones(creep.room).length){
-			memory.creeps[creep.name].target = creep.pos.findClosestByPath(Targets.Tombstones(creep.room));
-			memory.creeps[creep.name].action = "withdraw";
-		} else if(total_resources > 0){
-			memory.creeps[creep.name].target = creep.memory.permanent_target;
-			memory.creeps[creep.name].action = "withdraw";
-		} else {
-			memory.creeps[creep.name].target = creep.pos.findClosestByPath(Targets.Full_Containers(creep.room));
-			memory.creeps[creep.name].action = "withdraw";
+
+	} else if(memory.creeps[creep.name].state == "RESUPPLY" || memory.creeps[creep.name].state == "IDLE"){
+		let targets = [];
+
+		//const dropped_resources = Targets.Dropped_Resource(creep.room);
+		const filled_tombstones = Targets.Full_Tombstones(creep.room);
+		let filled_main_container = [];
+		if(Game.rooms[creep.memory.room_of_origin].energyCapacityAvailable < 2000){
+			filled_main_container = _.filter(main_container, container => {
+				const total_resources = _.sum(container.store);
+				return total_resources > 0;
+			});
 		}
+		let filled_local_source_containers = [];
+		let filled_local_containers = [];
+		if(main_container){
+			filled_local_source_containers = Targets.Filled_Source_Containers(main_container.room);
+			if(main_container.room.name != creep.memory.room_of_origin){
+				let filled_local_containers = Targets.Full_Containers(main_container.room);
+			}
+		}
+
+		const filled_source_containers = Global_Targets.Objects("Filled_Source_Containers");
+		const filled_mineral_containers = Global_Targets.Objects("Filled_Mineral_Containers");
+
+		targets = Target_Priority.Get(/*dropped_resources*/
+									  filled_tombstones,
+									  filled_main_container,
+									  filled_local_source_containers,
+									  filled_local_containers,
+									  filled_source_containers,///
+									  filled_mineral_containers);///THESE 2 SHOULD BE EQUAL PRIORITY
+
+		memory.creeps[creep.name].target = Target_Picker.Pick(creep, targets);
+		/*if(dropped_resources.length){
+			memory.creeps[creep.name].action = "pickup";
+		} else {*/
+		memory.creeps[creep.name].action = "withdraw";
+		//}
 	}
 		
-	if(memory.creeps[creep.name].target == null){
+	if(!memory.creeps[creep.name].target){
 		memory.creeps[creep.name].target = {id: 0};
 	}
 };

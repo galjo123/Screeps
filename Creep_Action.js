@@ -15,6 +15,14 @@ const Creep_Action = {
 		return creep.upgradeController(target);
 	},
 
+	claimController(creep, target){
+		return creep.claimController(target);
+	},
+
+	reserveController(creep, target){
+		return creep.reserveController(target);
+	},
+
 	build(creep, target){
 		return creep.build(target);
 	},
@@ -29,6 +37,14 @@ const Creep_Action = {
 
 	rangedAttack(creep, target){
 		return creep.rangedAttack(target);
+	},
+
+	attack(creep, target){
+		return creep.attack(target);
+	},
+
+	heal(creep, target){
+		return creep.heal(target);
 	}
 };
 

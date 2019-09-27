@@ -31,11 +31,7 @@ module.exports = (creep) => {
 		}
 	}
 		
-	if(memory.creeps[creep.name].target == null){
+	if(!memory.creeps[creep.name].target){
 		memory.creeps[creep.name].target = {id: 0};	
-	}
-
-	if(creep.memory.permanent_target == null){
-		creep.memory.permanent_target = {id: 0};	
 	}
 };

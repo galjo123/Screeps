@@ -5,8 +5,7 @@ module.exports = (creep) => {
 	const target = Game.getObjectById(memory.creeps[creep.name].target.id);
 
 	if(memory.creeps[creep.name].action == "repair"){
-		if(target.hits == target.hitsMax){
-			creep.memory.permanent_target = {id: 0};
+		if(target && target.hits == target.hitsMax){
 			Target_Assignment[creep.memory.role](creep);
 		}
 	}

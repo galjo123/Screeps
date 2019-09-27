@@ -7,10 +7,6 @@ let memory = {
 
 	},
 
-	flags:{
-
-	},
-
 	spawns:{
 
 	},
@@ -46,6 +42,11 @@ let memory = {
 			work_parts: 16,
 			move_parts: 17
 		}
+	},
+
+	cpu_checker:{
+		cpu_used: 0,
+		ticks: 0
 	}
 };
 

@@ -5,12 +5,17 @@ module.exports = (creep) => {
 		const Target_Assignment = require("Target_Assignment");
 		const target = Game.getObjectById(memory.creeps[creep.name].target.id);
 	
-		if(target.store){
+		if(target && target.store){
 			if(target.store.energy == 0){
 				Target_Assignment[creep.memory.role](creep);
 				if(memory.creeps[creep.name].target.id == 0){
 					memory.creeps[creep.name].state = "IDLE";
 				}
+			}
+		} else if(target && target.energy == 0){
+			Target_Assignment[creep.memory.role](creep);
+			if(memory.creeps[creep.name].target.id == 0){
+				memory.creeps[creep.name].state = "IDLE";
 			}
 		}
 	}

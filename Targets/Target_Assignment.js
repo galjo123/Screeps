@@ -7,7 +7,11 @@ const Target_Assignment = {
 
 	carrier: require("Carrier_Targets"),
 
-	explorer: require("Explorer_Targets")
+	explorer: require("Explorer_Targets"),
+
+	claimer: require("Claimer_Targets"),
+
+	soldier: require("Soldier_Targets")
 };
 
 module.exports = Target_Assignment;

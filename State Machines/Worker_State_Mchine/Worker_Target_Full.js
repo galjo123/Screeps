@@ -5,7 +5,7 @@ module.exports = (creep) => {
 
 	const target = Game.getObjectById(memory.creeps[creep.name].target.id);
 
-	if(creep.memory.role == "harvester" || creep.memory.role == "carrier"){
+	if(target && creep.memory.role == "harvester" || creep.memory.role == "carrier"){
 		let fullness = 0;
 		let capacity = 0;
 

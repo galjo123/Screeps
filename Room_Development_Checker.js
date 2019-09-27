@@ -14,6 +14,12 @@ const Room_Development_Checker = {
 		} else {
 			memory.rooms[room.name].room_development.links = false;
 		}
+
+		if(Targets.Extractors(room).length){
+			memory.rooms[room.name].room_development.mine = true;
+		} else {
+			memory.rooms[room.name].room_development.mine = false;
+		}
 	}
 };
 

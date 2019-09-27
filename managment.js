@@ -36,29 +36,13 @@ const Managment = {
 			Room_Development_Checker.Run(room);
 		});
 //////////FOR_CREATING_FLAG_OBJECTS/////////////////////////
-		const flag_object = require("flag_object");
-		let i = 0;
-
 		Run.All("flags", flag => {
-			i++;
-			if(!memory.flags[flag.name]){
-				flag_id = "Flag_" + Game.time + i;
-				memory.flags[flag.name] = new flag_object(flag, flag_id);
-			}
 			if(!flag.memory.room_ownership){
 				const creep_name = memory.rooms.E23N25.dynamic_room_info.my_creeps[0].name;
 				flag.memory.room_ownership = Game.creeps[creep_name].memory.room_of_origin;
 			}
 		});
-/////////FOR_CREATING_SPAWN_OBJECTS/////////////////////////
-		const spawn_object = require("spawn_object");
-
-		Run.All("spawns", spawn => {
-			if(!memory.spawns[spawn.name]){
-				memory.spawns[spawn.name] = new spawn_object();
-			}
-		});
-
+/////////FOR_CREATING_CREEP_OBJECTS/////////////////////////
 		const creep_object = require("creep_object");
 
 		Run.All("creeps", creep => {
@@ -79,6 +63,9 @@ const Managment = {
 				if(Targets.Enemy_Creeps(room).length){
 					const enemy_creep = tower.pos.findClosestByRange(Targets.Enemy_Creeps(room));
 					tower.attack(enemy_creep);
+				} else if(Targets.My_Damaged_Creeps(room).length){
+					const my_damaged_creep = tower.pos.findClosestByRange(Targets.My_Damaged_Creeps(room));
+					tower.heal(my_damaged_creep);
 				} else if((Targets.Maintenance(room).length ||
 						   Targets.Critical_Damaged_Ramparts(room).length ||
 						   Targets.Damaged_Walls(room).length) &&
@@ -100,43 +87,15 @@ const Managment = {
 	},
 /////////CREEP_SPAWNING//////////////////////////////
 	Creep_Spawning(){
-
 		const Spawn_Creeps = require("Spawn_Creeps");
 
-		Spawn_Creeps.Harvesters();
-		Spawn_Creeps.Upgraders();
-		Spawn_Creeps.Carriers();
-		Spawn_Creeps.Workers();
 		Spawn_Creeps.Explorers();
-		//const Make = require("Creep_Spawner");
-		//const Targets = require("Targets");
-		
-			
-			/*const creeps = memory.rooms[spawn.room.name].dynamic_room_info.my_creeps;
-			let harvesters = _.filter(creeps, creep => {return memory.creeps[creep.name].role == "harvester";});
-			const name = "Creep_" + Game.time;
-
-			if(harvesters_needed){
-				memory.creeps[name] = new creep_object("harvester");
-				spawn.spawnCreep([WORK,CARRY,MOVE], name, {memory: {room_of_origin: spawn.room.name, role: "harvester", permanent_target: {id: 0}}});
-			}*/
-			/*const harvester_number = _.filter(spawn.room.memory.roomInfo.my_creeps, creep => memory.creeps[creep.name].role == "harvester").length;
-			const worker_number = _.filter(spawn.room.memory.roomInfo.my_creeps, creep => memory.creeps[creep.name].role != "harvester").length;
-
-			const harvesting_spots = spawn.room.memory.roomInfo.E_harvesting_spots;
-			let available_spots = harvesting_spots;
-
-			if(!Targets.Containers(spawn.room, "spawn").length){
-				available_spots = spawn.room.memory.roomInfo.sources.length;
-			}
-
-			if(!spawn.spawning && harvester_number < available_spots){
-				Make.Harvester(spawn);
-			} else if(!spawn.spawning && worker_number < 3){
-				Make.Worker(spawn);
-			} else {
-				Make.Soldier(spawn);
-			}*/
+		Spawn_Creeps.Soldiers();
+		Spawn_Creeps.Claimers();
+		Spawn_Creeps.Workers();
+		Spawn_Creeps.Carriers();
+		Spawn_Creeps.Upgraders();
+		Spawn_Creeps.Harvesters();
 	},
 /////////STATE_MACHINE_ACTIVATION//////////////////////////////
 	State_Machine(State_Machine_Name, objects){
@@ -160,24 +119,26 @@ const Managment = {
 		Managment.Start_of_Tick();
 		Managment.Structure_Orders();
 		Managment.Creep_Spawning();
+		Managment.State_Machine("Soldier_State_Machine", "creeps");
 		Managment.State_Machine("Worker_State_Machine", "creeps");
 		Managment.State_Machine("Explorer_State_Machine", "creeps");
+		Managment.State_Machine("Claimer_State_Machine", "creeps");
 //console.log("--------------------------------------------");
 		/*Run.All("creeps", creep => {
 			if(creep.memory.role == "worker"){
 				console.log(memory.creeps[creep.name].state, memory.creeps[creep.name].action);
-				console.log(memory.creeps[creep.name].target.structureType);
+				console.log(memory.creeps[creep.name].current_flag);
 			}
 		});*/
-		/*const Targets = require("Targets");
-		const Global_Targets = require("Global_Targets");
-		if(Targets.Tombstones(Game.rooms.E23N25)[0]){
+
+		//const Targets = require("Targets");
+		//const Global_Targets = require("Global_Targets");
+		/*if(Targets.Tombstones(Game.rooms.E23N25)[0]){
 			console.log(Targets.Tombstones(Game.rooms.E23N25)[0].store.energy);
 		}*/
-		/*for(let room_name in memory.rooms){
-			console.log(Object.keys(memory.rooms[room_name]));
-		}
-		console.log("--------------------------------");*/
+		/*memory.cpu_checker.ticks++;
+		memory.cpu_checker.cpu_used += Game.cpu.getUsed();
+		console.log(memory.cpu_checker.cpu_used/memory.cpu_checker.ticks);*/
 	}
 };
 

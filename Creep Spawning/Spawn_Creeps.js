@@ -3,6 +3,7 @@ const Creeps_Needed = require("Creeps_Needed");
 const Creep_Parts = require("Creep_Parts");
 const Run = require("Run");
 const memory = require("memory");
+const _ = require("lodash");
 
 const Spawn_Creeps = {
 	Harvesters(){
@@ -51,10 +52,10 @@ const Spawn_Creeps = {
 				for(let room_name in upgraders_needed){
 					if(room_name == spawn.room.name && upgraders_needed[room_name] > 0){
 						const name = "Upgrader_" + Game.time + i;
-						const energy_available = spawn.room.energyAvailable/upgraders_needed[spawn.room.name];
+						const energy_available = spawn.room.energyAvailable;
 				
 						memory.creeps[name] = new creep_object();
-						spawn.spawnCreep([WORK,CARRY,MOVE]/*Creep_Parts.Upgrader(spawn.room, energy_available)*/, name, {
+						spawn.spawnCreep(Creep_Parts.Upgrader(spawn.room, energy_available), name, {
 							memory: {
 								room_of_origin: spawn.room.name,
 								role: "upgrader",
@@ -81,22 +82,27 @@ const Spawn_Creeps = {
 		Run.All("spawns", spawn => {
 			if(!spawn.spawning){
 				for(let room_name in workers_needed){
-					if(room_name == spawn.room.name && workers_needed[room_name] > 0){
+					if(room_name == spawn.room.name && Object.keys(workers_needed[room_name]).length > 0){
+						const assigned_room = Object.keys(workers_needed[room_name])[0];
+						const energy_available = spawn.room.energyAvailable/_.sum(workers_needed[room_name]);
+
 						const name = "Worker_" + Game.time + i;
-						const energy_available = spawn.room.energyAvailable/workers_needed[spawn.room.name];
 				
 						memory.creeps[name] = new creep_object();
-						spawn.spawnCreep([WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE]/*Creep_Parts.Worker(spawn.room, energy_available)*/, name, {
+						spawn.spawnCreep(Creep_Parts.Worker(spawn.room, energy_available), name, {
 							memory: {
 								room_of_origin: spawn.room.name,
 								role: "worker",
-								permanent_target: {id: 0}
+								permanent_target: assigned_room
 							}
 						});
 				
-						workers_needed[room_name]--;
+						workers_needed[room_name][assigned_room]--;
 				
-						if(workers_needed[room_name] == 0){
+						if(workers_needed[room_name][assigned_room] == 0){
+							delete workers_needed[room_name][assigned_room];
+						}
+						if(Object.keys(workers_needed[room_name]).length == 0){
 							delete workers_needed[room_name];
 						}
 					}
@@ -119,7 +125,7 @@ const Spawn_Creeps = {
 						const name = "Carrier_" + Game.time + i;
 						
 						memory.creeps[name] = new creep_object();
-						spawn.spawnCreep([CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE]/*Creep_Parts.Carrier(spawn.room)*/, name, {
+						spawn.spawnCreep(Creep_Parts.Carrier(spawn.room, spawn.room.energyAvailable), name, {
 							memory: {
 								room_of_origin: spawn.room.name,
 								role: "carrier",
@@ -172,7 +178,84 @@ const Spawn_Creeps = {
 				i++;
 			}
 		});
-	}
+	},
+
+	Claimers(){
+		let i = 0;
+		let claimers_needed = Creeps_Needed.Claimers();
+
+		Run.All("spawns", spawn => {
+			if(!spawn.spawning){
+				for(let room_name in claimers_needed){
+					if(room_name == spawn.room.name && Object.keys(claimers_needed[room_name]).length > 0){
+						const flag_name = Object.keys(claimers_needed[room_name])[0];
+						const name = "Claimer_" + Game.time + i;
+				
+						memory.creeps[name] = new creep_object();
+						spawn.spawnCreep([CLAIM, CLAIM, MOVE, MOVE], name, {
+							memory: {
+								room_of_origin: spawn.room.name,
+								role: "claimer",
+								permanent_target: flag_name
+							}
+						});
+				
+						claimers_needed[room_name]--;
+				
+						if(claimers_needed[room_name] == 0){
+							delete claimers_needed[room_name];
+						}
+					}
+				}
+				i++;
+			}
+		});
+	},
+
+	Soldiers(){
+		let i = 0;
+		let soldiers_needed = Creeps_Needed.Soldiers();
+
+		Run.All("spawns", spawn => {
+			if(!spawn.spawning){
+				for(let room_name in soldiers_needed){
+					if(room_name == spawn.room.name && Object.keys(soldiers_needed[room_name]).length > 0){
+						const squad = Object.keys(soldiers_needed[room_name])[0];
+						const combat_role = Object.keys(soldiers_needed[room_name][squad])[0];
+						if(soldiers_needed[room_name][squad][combat_role]){
+							const name = "Soldier_" + Game.time + i;//NEEDS EXTRA WORK
+
+							memory.creeps[name] = new creep_object();
+							spawn.spawnCreep([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,ATTACK,ATTACK,ATTACK,RANGED_ATTACK,
+												MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,HEAL], name, {
+								memory: {
+									room_of_origin: spawn.room.name,
+									squad: squad,
+									role: combat_role,
+									permanent_target: {id: 0}
+								}
+							});
+					
+							soldiers_needed[room_name][squad][combat_role]--;
+						}
+				
+						if(soldiers_needed[room_name][squad][combat_role] == 0){
+							delete soldiers_needed[room_name][squad][combat_role];
+						}
+
+						if(Object.keys(soldiers_needed[room_name][squad]).length == 0){
+							delete soldiers_needed[room_name][squad];
+						}
+
+						if(Object.keys(soldiers_needed[room_name]).length == 0){
+							delete soldiers_needed[room_name];
+						}
+					}
+				}
+				i++;
+			}
+		});
+	},
 };
 
 module.exports = Spawn_Creeps;

@@ -54,7 +54,7 @@ const Creep_Parts = {
 			}
 		}
 
-		return Creep_Parts_Array.Create(move_parts, work_parts, carry_parts);
+		return Creep_Parts_Array.Create(work_parts, carry_parts, move_parts);
 	},
 
 	Worker(room, energy_per_creep){
@@ -89,7 +89,34 @@ const Creep_Parts = {
 			}
 		}
 
-		return Creep_Parts_Array.Create(move_parts, work_parts, carry_parts);
+		return Creep_Parts_Array.Create(work_parts, carry_parts, move_parts);
+	},
+
+	Upgrader(room){
+		if(room.controller.level != 8){
+			const energy_per_creep = room.energyAvailable;
+			return Creep_Parts.Worker(room, energy_per_creep);
+		} else {
+			return [WORK, CARRY, MOVE];
+		}
+	},
+
+	Carrier(room, energy_per_creep){
+		let energy_available = energy_per_creep;
+		let carry_parts = {number: 0, type: CARRY},
+			move_parts = {number: 0, type: MOVE};
+
+		const carry_part_cost = memory.constants.body_part_costs.CARRY;
+
+		if(energy_available > 200){
+			carry_parts.number = energy_available / 2 / carry_part_cost;
+			if(carry_parts.number > 25){
+				carry_parts.number = 25;
+			}
+			move_parts.number = carry_parts.number;
+		}
+
+		return Creep_Parts_Array.Create(carry_parts, move_parts);
 	}
 };
 

@@ -4,155 +4,71 @@ const memory = require("memory");
 const _ = require("lodash");
 
 const Global_Targets = {
+	Objects(type){
+		let objects_array = [];
+		
+		Run.All("rooms", room => {
+			if((room.controller && room.controller.my) || Targets.Resource_Colony_Flag(room).length){
+				objects_array.push(...Targets[type](room));
+			}
+		});
+
+		return objects_array;
+	},
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	Exploration_Flags(){
 		let exploration_flags = [];
 
-		for(let name in Game.flags){
-			const flag = Game.flags[name];
+		Run.All("flags", flag => {
 			if(flag.color == COLOR_PURPLE && flag.secondaryColor == COLOR_PURPLE){
 				exploration_flags.push(flag);
 			}
-		}
+		});
 		return exploration_flags;	
 	},
 
-	Full_Containers(){
-		let full_containers = [];
-		
-		Run.All("rooms", room => {
-			if(room.controller.my || Targets.Resource_Colony_Flag(room).length){
-				full_containers.push(...Targets.Full_Containers(room));
+	Claim_Flags(){
+		let claim_flags = [];
+
+		Run.All("flags", flag => {
+			if(flag.color == COLOR_PURPLE && flag.secondaryColor == COLOR_RED){
+				claim_flags.push(flag);
 			}
 		});
-
-		return full_containers;
+		return claim_flags;
 	},
 
-	Empty_Containers(){
-		let empty_containers = [];
-		
-		Run.All("rooms", room => {
-			if(room.controller.my || Targets.Resource_Colony_Flag(room).length){
-				empty_containers.push(...Targets.Empty_Containers(room));
+	Resource_Colony_Flags(){
+		let resource_colony_flags = [];
+
+		Run.All("flags", flag => {
+			if(flag.color == COLOR_YELLOW && flag.secondaryColor == COLOR_YELLOW){
+				resource_colony_flags.push(flag);
 			}
 		});
-
-		return empty_containers;
+		return resource_colony_flags;
 	},
 
-	Empty_Spawns_And_Extensions(){
-		let empty_spawns_and_extensions = [];
-		
-		Run.All("rooms", room => {
-			if(room.controller.my || Targets.Resource_Colony_Flag(room).length){
-				empty_spawns_and_extensions.push(...Targets.Empty_Spawns_And_Extensions(room));
+	Alpha_Squad_Flags(){
+		let alpha_squad_flags = [];
+
+		Run.All("flags", flag => {
+			if(flag.color == COLOR_RED && flag.secondaryColor == COLOR_RED){
+				alpha_squad_flags.push(flag);
 			}
 		});
-
-		return empty_spawns_and_extensions;
+		return alpha_squad_flags;
 	},
 
-	Semi_Empty_Towers(){
-		let semi_empty_towers = [];
-		
-		Run.All("rooms", room => {
-			if(room.controller.my || Targets.Resource_Colony_Flag(room).length){
-				semi_empty_towers.push(...Targets.Semi_Empty_Towers(room));
+	Beta_Squad_Flags(){
+		let beta_squad_flags = [];
+
+		Run.All("flags", flag => {
+			if(flag.color == COLOR_RED && flag.secondaryColor == COLOR_PURPLE){
+				beta_squad_flags.push(flag);
 			}
 		});
-
-		return semi_empty_towers;
-	},
-
-	Empty_Towers(){
-		let empty_towers = [];
-		
-		Run.All("rooms", room => {
-			if(room.controller.my || Targets.Resource_Colony_Flag(room).length){
-				empty_towers.push(...Targets.Empty_Towers(room));
-			}
-		});
-
-		return empty_towers;
-	},
-
-	Construction_Sites(){
-		let construction_sites = [];
-		Run.All("rooms", room => {
-			if(room.controller.my || Targets.Resource_Colony_Flag(room).length){
-				construction_sites.push(...Targets.Construction_Sites(room));
-			}
-		});
-
-		return construction_sites;
-	},
-
-	Maintenance(){
-		let construction_sites = [];
-		Run.All("rooms", room => {
-			if(room.controller.my || Targets.Resource_Colony_Flag(room).length){
-				construction_sites.push(...Targets.Maintenance(room));
-			}
-		});
-
-		return construction_sites;
-	},
-
-	Critical_Maintenance(){
-		let construction_sites = [];
-		Run.All("rooms", room => {
-			if(room.controller.my || Targets.Resource_Colony_Flag(room).length){
-				construction_sites.push(...Targets.Critical_Maintenance(room));
-			}
-		});
-
-		return construction_sites;
-	},
-
-	Damaged_Ramparts(){
-		let damaged_ramparts = [];
-		Run.All("rooms", room => {
-			if(room.controller.my || Targets.Resource_Colony_Flag(room).length){
-				damaged_ramparts.push(...Targets.Damaged_Ramparts(room));
-			}
-		});
-
-		return damaged_ramparts;
-	},
-
-	Critical_Damaged_Ramparts(){
-		let damaged_ramparts = [];
-		Run.All("rooms", room => {
-			if(room.controller.my || Targets.Resource_Colony_Flag(room).length){
-				damaged_ramparts.push(...Targets.Critical_Damaged_Ramparts(room));
-			}
-		});
-
-		return damaged_ramparts;
-	},
-
-	Damaged_Walls(){
-		let damaged_walls = [];
-		
-		Run.All("rooms", room => {
-			if(room.controller.my || Targets.Resource_Colony_Flag(room).length){
-				damaged_walls.push(...Targets.Damaged_Walls(room));
-			}
-		});
-
-		return damaged_walls;
-	},
-
-	Critical_Damaged_Walls(){
-		let damaged_walls = [];
-		
-		Run.All("rooms", room => {
-			if(room.controller.my || Targets.Resource_Colony_Flag(room).length){
-				damaged_walls.push(...Targets.Critical_Damaged_Walls(room));
-			}
-		});
-
-		return damaged_walls;
+		return beta_squad_flags;
 	}
 };
 
