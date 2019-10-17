@@ -40,9 +40,9 @@ const Targets = {
 		const containers = Targets.Containers(room);
 
 		return _.filter(containers, structure => {
-			const stored_resources = _.sum(structure.store);
-			return (structure.structureType == STRUCTURE_STORAGE && structure.store.energy < structure.storeCapacity/2) ||
-					(structure.structureType == STRUCTURE_CONTAINER && stored_resources < structure.storeCapacity);
+			const stored_resources = structure.store.getUsedCapacity();
+			return (structure.structureType == STRUCTURE_STORAGE && structure.store.energy < structure.store.getCapacity()/2) ||
+					(structure.structureType == STRUCTURE_CONTAINER && stored_resources < structure.store.getCapacity());
 		});
 	},
 
@@ -106,8 +106,7 @@ const Targets = {
 	Filled_Mineral_Containers(room){
 		const mineral_containers = Targets.Mineral_Containers(room);
 		return _.filter(mineral_containers, container => {
-			const total_resources = _.sum(container.store);
-			return total_resources > 0;
+			return container.store.getUsedCapacity() > 0;
 		});
 	},
 
@@ -124,8 +123,7 @@ const Targets = {
 		});
 
 		_.remove(source_containers, container => {
-			const total_resources = _.sum(container.store);
-			return total_resources == container.storeCapacity;
+			return container.store.getUsedCapacity() == container.store.getCapacity();
 		});
 		return source_containers;
 	},
@@ -165,7 +163,7 @@ const Targets = {
 		const spawns_and_extensions = Targets.Spawns_And_Extensions(room);
 
 		return _.filter(spawns_and_extensions, structure => {
-			return structure.energy < structure.energyCapacity;
+			return structure.store.energy < structure.store.getCapacity(RESOURCE_ENERGY);
 		});
 	},
 /////CONTROLLER////////////////////////////////////////////////////////////////////////////////////////////
@@ -191,7 +189,8 @@ const Targets = {
 		return _.filter(structures, structure => {
 			return structure.hits <= memory.constants.maintenance_constant * structure.hitsMax &&
 					structure.structureType != STRUCTURE_WALL &&
-					structure.structureType != STRUCTURE_RAMPART;
+					structure.structureType != STRUCTURE_RAMPART &&
+					structure.structureType != STRUCTURE_CONTROLLER;
 		});
 	},
 
@@ -199,9 +198,10 @@ const Targets = {
 		const structures = memory.rooms[room.name].dynamic_room_info.structures;
 		
 		return _.filter(structures, structure => {
-			return structure.hits <= memory.constants.cricital_maintenance_constant * structure.hitsMax &&
+			return structure.hits <= memory.constants.critical_maintenance_constant * structure.hitsMax &&
 					structure.structureType != STRUCTURE_WALL &&
-					structure.structureType != STRUCTURE_RAMPART;
+					structure.structureType != STRUCTURE_RAMPART &&
+					structure.structureType != STRUCTURE_CONTROLLER;
 		});
 	},
 
@@ -209,7 +209,7 @@ const Targets = {
 		const structures = memory.rooms[room.name].dynamic_room_info.structures;
 		
 		return _.filter(structures, structure => {
-			return structure.hits <= structure.hitsMax &&
+			return structure.hits < structure.hitsMax &&
 					structure.structureType == STRUCTURE_WALL;
 		});
 	},
@@ -227,7 +227,7 @@ const Targets = {
 		const structures = memory.rooms[room.name].dynamic_room_info.structures;
 		
 		return _.filter(structures, structure => {
-			return structure.hits <= structure.hitsMax &&
+			return structure.hits < structure.hitsMax &&
 					structure.structureType == STRUCTURE_RAMPART;
 		});
 	},
@@ -251,14 +251,14 @@ const Targets = {
 	Empty_Towers(room){
 		const towers = Targets.Towers(room);
 		return _.filter(towers, tower => {
-			return tower.energy < tower.energyCapacity;
+			return tower.store.energy < tower.store.getCapacity(RESOURCE_ENERGY);
 		});
 	},
 
 	Critically_Empty_Towers(room){
 		const towers = Targets.Towers(room);
 		return _.filter(towers, tower => {
-			return tower.energy < tower.energyCapacity * 0.65;
+			return tower.store.energy < tower.store.getCapacity(RESOURCE_ENERGY) * 0.65;
 		});
 	},
 /////CREEPS////////////////////////////////////////////////////////////////////////////////////////////

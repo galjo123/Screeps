@@ -6,7 +6,7 @@ const _ = require("lodash");
 module.exports = (creep) => {
 	const claim_flag = Game.flags[creep.memory.permanent_target];
 
-	if(creep.room == claim_flag.room){
+	if(claim_flag && creep.room == claim_flag.room){
 		const room_controller = claim_flag.room.controller;
 		memory.creeps[creep.name].target = room_controller;
 

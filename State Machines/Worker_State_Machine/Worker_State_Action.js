@@ -6,7 +6,7 @@ module.exports = (creep) => {
 	const creep_action = memory.creeps[creep.name].action;
 	let path_reusing = 5;
 	if(creep.memory.role == "worker" || creep.memory.role == "upgrader"){
-		path_reusing = 20;
+		path_reusing = 40;
 	}
 
 	if(Creep_Action[creep_action](creep, target) == -9){

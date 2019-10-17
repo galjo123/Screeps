@@ -19,19 +19,19 @@ const Creeps_Needed = {
 					harvesters_needed[room_name] = {};
 				}
 			
-				sources.forEach(source => {			
+				sources.forEach(source => {
 					if(room.energyCapacityAvailable < 400 && memory.rooms[room.name].static_room_info.spots_per_source[source.id] >= 5){
 						spots[source.id] = memory.rooms[room.name].static_room_info.spots_per_source[source.id];
-					} else if(room.energyCapacityAvailable < 600 && room.energyCapacityAvailable >= 400 && memory.rooms[room.name].static_room_info.spots_per_source[source.id] >= 4){
+					} else if(room.energyCapacityAvailable < 600 /*&& room.energyCapacityAvailable >= 400*/ && memory.rooms[room.name].static_room_info.spots_per_source[source.id] >= 4){
 						spots[source.id] = 4;
-					} else if(room.energyCapacityAvailable < 900 && room.energyCapacityAvailable >= 600 && memory.rooms[room.name].static_room_info.spots_per_source[source.id] >= 3){
+					} else if(room.energyCapacityAvailable < 900 /*&& room.energyCapacityAvailable >= 600*/ && memory.rooms[room.name].static_room_info.spots_per_source[source.id] >= 3){
 						spots[source.id] = 3;
-					} else if(room.energyCapacityAvailable < 1800 && room.energyCapacityAvailable >= 900 && spots_left[source.id] >= 2){
+					} else if(room.energyCapacityAvailable < 1800 /*&& room.energyCapacityAvailable >= 900*/ && memory.rooms[room.name].static_room_info.spots_per_source[source.id] >= 2){
 						spots[source.id] = 2;
 					} else {
 						spots[source.id] = 1;
 					}
-			
+
 					let assigned_creeps = 0;
 			
 					for(let name in Game.creeps){

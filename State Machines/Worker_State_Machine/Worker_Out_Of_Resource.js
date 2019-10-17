@@ -5,7 +5,7 @@ module.exports = (creep) => {
 	const Target_Assignment = require("Target_Assignment");
 
 	//PLACEHOLDER//const total_resources = _.sum(creep.carry);
-	if(creep.carry.energy == 0){
+	if(creep.store.energy == 0){
 		memory.creeps[creep.name].state = "RESUPPLY";
 		Target_Assignment[creep.memory.role](creep);
 	}

@@ -84,7 +84,13 @@ const Spawn_Creeps = {
 				for(let room_name in workers_needed){
 					if(room_name == spawn.room.name && Object.keys(workers_needed[room_name]).length > 0){
 						const assigned_room = Object.keys(workers_needed[room_name])[0];
-						const energy_available = spawn.room.energyAvailable/_.sum(workers_needed[room_name]);
+						let workers_in_waiting = 0;
+						if(spawn.room.energyAvailable < 400){
+							workers_in_waiting = 1;
+						} else {
+							_.sum(workers_needed[room_name]);
+						}
+						const energy_available = spawn.room.energyAvailable/workers_in_waiting;
 
 						const name = "Worker_" + Game.time + i;
 				

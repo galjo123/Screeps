@@ -38,8 +38,10 @@ const Managment = {
 //////////FOR_CREATING_FLAG_OBJECTS/////////////////////////
 		Run.All("flags", flag => {
 			if(!flag.memory.room_ownership){
-				const creep_name = memory.rooms.E23N25.dynamic_room_info.my_creeps[0].name;
-				flag.memory.room_ownership = Game.creeps[creep_name].memory.room_of_origin;
+				const creep_name = memory.rooms[flag.room.name].dynamic_room_info.my_creeps[0].name;
+				if(creep_name){
+					flag.memory.room_ownership = Game.creeps[creep_name].memory.room_of_origin;
+				}
 			}
 		});
 /////////FOR_CREATING_CREEP_OBJECTS/////////////////////////
@@ -125,13 +127,15 @@ const Managment = {
 		Managment.State_Machine("Claimer_State_Machine", "creeps");
 //console.log("--------------------------------------------");
 		/*Run.All("creeps", creep => {
-			if(creep.memory.role == "worker"){
+			if(creep.memory.role == "carrier" && creep.room.name == "E21N25"){
 				console.log(memory.creeps[creep.name].state, memory.creeps[creep.name].action);
-				console.log(memory.creeps[creep.name].current_flag);
+				console.log(memory.creeps[creep.name].target.structureType);
+				console.log(memory.creeps[creep.name].target.id);
 			}
 		});*/
 
-		//const Targets = require("Targets");
+		/*const Targets = require("Targets");
+		console.log(Targets.Critical_Maintenance(Game.rooms.E21N25));*/
 		//const Global_Targets = require("Global_Targets");
 		/*if(Targets.Tombstones(Game.rooms.E23N25)[0]){
 			console.log(Targets.Tombstones(Game.rooms.E23N25)[0].store.energy);

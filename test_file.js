@@ -1,4 +1,4 @@
-const hue = [1,2,3,4];
+const hue = {yey: 10};
 const nya = [];
 const _ = require("lodash");
 
@@ -31,4 +31,6 @@ let string = "alpha";
 const current_flag = "Alpha2";
 const number = Number(current_flag[current_flag.length - 1]);
 const next_flag = string + (number + 1);
-console.log(next_flag);
+//console.log(next_flag);
+
+console.log(hue.hits <= 12);
